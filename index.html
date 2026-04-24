@@ -21,7 +21,7 @@
     .takeover{color:#35d07f}
     .top{position:sticky;top:0;z-index:10;background:linear-gradient(180deg,rgba(7,10,18,.98),rgba(7,10,18,.88));backdrop-filter:blur(12px);padding:12px 0;margin-bottom:14px;border-bottom:1px solid var(--line)}
     .panel{background:linear-gradient(180deg,rgba(28,39,64,.95),rgba(21,29,46,.95));border:1px solid var(--line);border-radius:18px;box-shadow:var(--shadow)}
-    .controls{display:grid;grid-template-columns:180px 1fr auto auto;gap:10px;padding:12px;align-items:end}
+    .controls{display:grid;grid-template-columns:180px 1fr auto auto auto;gap:10px;padding:12px;align-items:end}
     label{display:block;color:var(--muted);font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;margin:0 0 5px}
     input{width:100%;border:1px solid var(--line);background:#0b1120;color:var(--text);border-radius:12px;padding:11px 12px;font-size:15px;outline:none}
     input:focus{border-color:var(--gold);box-shadow:0 0 0 3px rgba(245,200,75,.12)}
@@ -39,6 +39,11 @@
     .tabs{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0}
     .tab{padding:10px 13px;border-radius:999px;background:rgba(255,255,255,.06);border:1px solid var(--line);cursor:pointer;font-weight:800;color:var(--muted)}
     .tab.active{background:linear-gradient(180deg,rgba(245,200,75,.28),rgba(245,200,75,.12));color:var(--text);border-color:rgba(245,200,75,.55)}
+
+    .modeWrap{display:flex;gap:8px;align-items:end;flex-wrap:wrap}
+    .modeGroup{display:flex;gap:8px;flex-wrap:wrap}
+    .mode{padding:10px 13px;border-radius:999px;background:rgba(255,255,255,.06);border:1px solid var(--line);cursor:pointer;font-weight:800;color:var(--muted)}
+    .mode.active{background:linear-gradient(180deg,rgba(245,200,75,.28),rgba(245,200,75,.12));color:var(--text);border-color:rgba(245,200,75,.55)}
     .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:10px}
     .item{background:linear-gradient(180deg,rgba(28,39,64,.92),rgba(18,25,40,.92));border:1px solid var(--line);border-radius:16px;padding:11px;position:relative;overflow:hidden}
     .item::before{content:"";position:absolute;inset:0 auto 0 0;width:3px;background:linear-gradient(var(--gold),transparent);opacity:.7}
@@ -55,7 +60,7 @@
     .total{text-align:right;font-weight:900;color:#dce8ff}
     .note{font-size:11px;color:var(--muted);margin-top:7px;line-height:1.25}
     .footer{color:var(--muted);font-size:12px;text-align:center;padding:24px 0}
-    @media(max-width:780px){.controls{grid-template-columns:1fr 1fr}.summary{grid-template-columns:1fr 1fr}.top{position:static}.grid{grid-template-columns:1fr 1fr}.wrap{padding:12px}}
+    @media(max-width:780px){.controls{grid-template-columns:1fr 1fr}.modeWrap{grid-column:1 / -1}.summary{grid-template-columns:1fr 1fr}.top{position:static}.grid{grid-template-columns:1fr 1fr}.wrap{padding:12px}}
     @media(max-width:520px){.grid{grid-template-columns:1fr}.controls{grid-template-columns:1fr}.summary{grid-template-columns:1fr 1fr}}
   </style>
 </head>
@@ -76,6 +81,16 @@
         <div class="controls">
           <div><label>Pack Price</label><input id="price" type="number" min="0" step="0.01" placeholder="9.99"></div>
           <div><label>Search Items</label><input id="search" type="text" placeholder="Ancient, energy, chickens..."></div>
+          <div class="modeWrap">
+            <div>
+              <label>Value Mode</label>
+              <div class="modeGroup">
+                <button type="button" class="mode" data-mode="strict">Strict</button>
+                <button type="button" class="mode active" data-mode="mid">Mid</button>
+                <button type="button" class="mode" data-mode="decent">Decent</button>
+              </div>
+            </div>
+          </div>
           <button id="clearQty" type="button">Clear Qty</button>
           <button id="clearAll" type="button">Reset All</button>
         </div>
@@ -91,7 +106,7 @@
 
     <div id="tabs" class="tabs"></div>
     <main id="items" class="grid"></main>
-    <div class="footer">Easy Adding Number = 60% Ideal + 40% OK. Pack is good when Added Value is higher than Pack Price.</div>
+    <div class="footer">Strict = 80% Ideal / 20% OK. Mid = 60% Ideal / 40% OK. Decent = 40% Ideal / 60% OK.</div>
   </div>
 
 <script>
@@ -131,12 +146,20 @@ const DATA=[
 
 const $=id=>document.getElementById(id);
 const saved=JSON.parse(localStorage.getItem('raidPackValueState')||'{}');
-const state={qty:{},price:'',section:'All',...saved};
+const state={qty:{},price:'',section:'All',mode:'mid',...saved};
 let currentSection=state.section||'All';
+let currentMode=state.mode||'mid';
 
 function easyValue(x){
   if(x.ideal==null || x.realistic==null)return null;
-  return (Number(x.ideal)*0.6)+(Number(x.realistic)*0.4);
+
+  const ideal=Number(x.ideal);
+  const realistic=Number(x.realistic);
+
+  if(currentMode==='strict')return (ideal*.8)+(realistic*.2);
+  if(currentMode==='decent')return (ideal*.4)+(realistic*.6);
+
+  return (ideal*.6)+(realistic*.4);
 }
 function money(n){
   if(n==null||Number.isNaN(Number(n)))return'Not Factoring';
@@ -145,12 +168,24 @@ function money(n){
 }
 function safe(s){return String(s).replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;');}
 function idOf(x){return x.section+'|'+x.item}
-function save(){state.price=$('price').value;state.section=currentSection;localStorage.setItem('raidPackValueState',JSON.stringify(state));}
+function save(){state.price=$('price').value;state.section=currentSection;state.mode=currentMode;localStorage.setItem('raidPackValueState',JSON.stringify(state));}
 
 function renderTabs(){
   const sections=['All',...new Set(DATA.map(x=>x.section))];
   $('tabs').innerHTML=sections.map(s=>`<button type="button" class="tab ${s===currentSection?'active':''}" data-section="${safe(s)}">${safe(s)}</button>`).join('');
   document.querySelectorAll('.tab').forEach(btn=>btn.addEventListener('click',()=>{currentSection=btn.dataset.section;save();renderTabs();renderItems();}));
+}
+
+function renderModes(){
+  document.querySelectorAll('.mode').forEach(btn=>{
+    btn.classList.toggle('active',btn.dataset.mode===currentMode);
+    btn.onclick=()=>{
+      currentMode=btn.dataset.mode;
+      save();
+      renderModes();
+      renderItems();
+    };
+  });
 }
 
 function renderItems(){
@@ -220,6 +255,7 @@ $('price').addEventListener('input',()=>{updateSummary();save();});
 $('search').addEventListener('input',renderItems);
 $('clearQty').addEventListener('click',()=>{state.qty={};save();renderItems();});
 $('clearAll').addEventListener('click',()=>{state.qty={};state.price='';$('price').value='';save();renderItems();});
+renderModes();
 renderTabs();
 renderItems();
 </script>
