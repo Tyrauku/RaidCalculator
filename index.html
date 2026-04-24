@@ -91,7 +91,7 @@
 
     <div id="tabs" class="tabs"></div>
     <main id="items" class="grid"></main>
-    <div class="footer">Easy Adding Number = your chosen decision price. Pack is good when Added Value is higher than Pack Price.</div>
+    <div class="footer">Easy Adding Number = 60% Ideal + 40% OK. Pack is good when Added Value is higher than Pack Price.</div>
   </div>
 
 <script>
@@ -123,10 +123,10 @@ const ICONS={
 };
 
 const DATA=[
-{section:'Regular Purchases',item:'Ancient Shard',ideal:.90,realistic:1.15,easy:.98},{section:'Regular Purchases',item:'Void Shard',ideal:2,realistic:2.5,easy:2.15},{section:'Regular Purchases',item:'Sacred Shard',ideal:7,realistic:15,easy:9.4},{section:'Regular Purchases',item:'Primal Shard',ideal:4,realistic:5,easy:4.3},{section:'Regular Purchases',item:'Energy',ideal:.00370,realistic:.005,easy:.00383},{section:'Regular Purchases',item:'Energy Refills',ideal:.48,realistic:.65,easy:.5},{section:'Regular Purchases',item:'Gems',ideal:.012,realistic:.016,easy:.01},{section:'Regular Purchases',item:'Legendary Books',ideal:3.5,realistic:5,easy:3.95},{section:'Regular Purchases',item:'Mythical Books',ideal:5,realistic:8,easy:5.9},{section:'Regular Purchases',item:'Mortal Soulstone',ideal:.5,realistic:.8,easy:.59},{section:'Regular Purchases',item:'Immortal Soulstone',ideal:4,realistic:5,easy:4.3},{section:'Regular Purchases',item:'Eternal Soulstone',ideal:20,realistic:25,easy:21.5},{section:'Regular Purchases',item:'2* Basalt',ideal:null,realistic:.41,easy:.12},{section:'Regular Purchases',item:'3* Basalt',ideal:null,realistic:1.25,easy:.38},{section:'Regular Purchases',item:'4* Basalt',ideal:null,realistic:5,easy:1.5},{section:'Regular Purchases',item:'Starstone',ideal:.0055,realistic:.0066,easy:.0058},
-{section:'As Needed',item:'Epic Books',ideal:2,realistic:3,easy:2.3},{section:'As Needed',item:'Rare Books',ideal:null,realistic:null,easy:null},{section:'As Needed',item:'Brews',ideal:.0093,realistic:null,easy:.0065,note:'Based on pricing of barrels'},{section:'As Needed',item:'Barrel',ideal:1,realistic:null,easy:.7,note:'Higher value on rank 6 champs. About 200 energy worth of XP from 1-60.'},{section:'As Needed',item:'XP Boost',ideal:null,realistic:null,easy:null,note:'Shop has them for 140 gems; usually not worth factoring.'},{section:'As Needed',item:'4* Chickens',ideal:1,realistic:1.25,easy:1.08},{section:'As Needed',item:'5* Chickens',ideal:5,realistic:6,easy:5.3},{section:'As Needed',item:'Feast',ideal:25,realistic:30,easy:26.5,note:'Higher value when used on low rank champs.'},
-{section:'Included in Packs',item:'Clan Boss Key',ideal:null,realistic:null,easy:null},{section:'Included in Packs',item:'Arena Refills',ideal:.43,realistic:.65,easy:.5},{section:'Included in Packs',item:'2* Chickens',ideal:null,realistic:null,easy:null},{section:'Included in Packs',item:'3* Chickens',ideal:null,realistic:null,easy:null},{section:'Included in Packs',item:'Tag Arena Refills',ideal:.43,realistic:.65,easy:.5},{section:'Included in Packs',item:'5* Epic Chaos Ore',ideal:null,realistic:null,easy:null},{section:'Included in Packs',item:'6* Epic Chaos Ore',ideal:null,realistic:null,easy:null},{section:'Included in Packs',item:'5* Leg Chaos Ore',ideal:null,realistic:null,easy:null},{section:'Included in Packs',item:'6* Leg Chaos Ore',ideal:null,realistic:null,easy:null},{section:'Included in Packs',item:'Multi-battles',ideal:null,realistic:null,easy:null},{section:'Included in Packs',item:'Plarium Play Points',ideal:null,realistic:null,easy:null},{section:'Included in Packs',item:'Silver',ideal:null,realistic:null,easy:null},
-{section:'Never Purchased',item:'Lesser Artifact Oil',ideal:null,realistic:null,easy:null},{section:'Never Purchased',item:'Greater Artifact Oil',ideal:null,realistic:null,easy:null},{section:'Never Purchased',item:'Superior Artifact Oil',ideal:null,realistic:null,easy:null},{section:'Never Purchased',item:'Lesser Potions',ideal:null,realistic:null,easy:null},{section:'Never Purchased',item:'Greater Potions',ideal:null,realistic:null,easy:null},{section:'Never Purchased',item:'Superior Potions',ideal:null,realistic:null,easy:null}
+{section:'Regular Purchases',item:'Ancient Shard',ideal:.90,realistic:1.15},{section:'Regular Purchases',item:'Void Shard',ideal:2,realistic:2.5},{section:'Regular Purchases',item:'Sacred Shard',ideal:7,realistic:15},{section:'Regular Purchases',item:'Primal Shard',ideal:4,realistic:5},{section:'Regular Purchases',item:'Energy',ideal:.00333,realistic:.005},{section:'Regular Purchases',item:'Energy Refills',ideal:.43,realistic:.65},{section:'Regular Purchases',item:'Gems',ideal:.01075,realistic:.016},{section:'Regular Purchases',item:'Legendary Books',ideal:3.5,realistic:5},{section:'Regular Purchases',item:'Mythical Books',ideal:5,realistic:8},{section:'Regular Purchases',item:'Mortal Soulstone',ideal:.5,realistic:.8},{section:'Regular Purchases',item:'Immortal Soulstone',ideal:4,realistic:5},{section:'Regular Purchases',item:'Eternal Soulstone',ideal:20,realistic:25},{section:'Regular Purchases',item:'2* Basalt',ideal:null,realistic:.41},{section:'Regular Purchases',item:'3* Basalt',ideal:null,realistic:1.25},{section:'Regular Purchases',item:'4* Basalt',ideal:null,realistic:5},{section:'Regular Purchases',item:'Starstone',ideal:.0055,realistic:.0066},
+{section:'As Needed',item:'Epic Books',ideal:2,realistic:3},{section:'As Needed',item:'Rare Books',ideal:null,realistic:null},{section:'As Needed',item:'Brews',ideal:.0093,realistic:null,note:'Based on pricing of barrels'},{section:'As Needed',item:'Barrel',ideal:1,realistic:null,note:'Higher value on rank 6 champs. About 200 energy worth of XP from 1-60.'},{section:'As Needed',item:'XP Boost',ideal:null,realistic:null,note:'Shop has them for 140 gems; usually not worth factoring.'},{section:'As Needed',item:'4* Chickens',ideal:1,realistic:1.25},{section:'As Needed',item:'5* Chickens',ideal:5,realistic:6},{section:'As Needed',item:'Feast',ideal:25,realistic:30,note:'Higher value when used on low rank champs.'},
+{section:'Included in Packs',item:'Clan Boss Key',ideal:null,realistic:null},{section:'Included in Packs',item:'Arena Refills',ideal:.43,realistic:.65},{section:'Included in Packs',item:'2* Chickens',ideal:null,realistic:null},{section:'Included in Packs',item:'3* Chickens',ideal:null,realistic:null},{section:'Included in Packs',item:'Tag Arena Refills',ideal:.43,realistic:.65},{section:'Included in Packs',item:'5* Epic Chaos Ore',ideal:null,realistic:null},{section:'Included in Packs',item:'6* Epic Chaos Ore',ideal:null,realistic:null},{section:'Included in Packs',item:'5* Leg Chaos Ore',ideal:null,realistic:null},{section:'Included in Packs',item:'6* Leg Chaos Ore',ideal:null,realistic:null},{section:'Included in Packs',item:'Multi-battles',ideal:null,realistic:null},{section:'Included in Packs',item:'Plarium Play Points',ideal:null,realistic:null},{section:'Included in Packs',item:'Silver',ideal:null,realistic:null},
+{section:'Never Purchased',item:'Lesser Artifact Oil',ideal:null,realistic:null},{section:'Never Purchased',item:'Greater Artifact Oil',ideal:null,realistic:null},{section:'Never Purchased',item:'Superior Artifact Oil',ideal:null,realistic:null},{section:'Never Purchased',item:'Lesser Potions',ideal:null,realistic:null},{section:'Never Purchased',item:'Greater Potions',ideal:null,realistic:null},{section:'Never Purchased',item:'Superior Potions',ideal:null,realistic:null}
 ];
 
 const $=id=>document.getElementById(id);
@@ -134,6 +134,10 @@ const saved=JSON.parse(localStorage.getItem('raidPackValueState')||'{}');
 const state={qty:{},price:'',section:'All',...saved};
 let currentSection=state.section||'All';
 
+function easyValue(x){
+  if(x.ideal==null || x.realistic==null)return null;
+  return (Number(x.ideal)*0.6)+(Number(x.realistic)*0.4);
+}
 function money(n){
   if(n==null||Number.isNaN(Number(n)))return'Not Factoring';
   const num=Number(n);
@@ -155,18 +159,19 @@ function renderItems(){
   $('items').innerHTML=rows.map(x=>{
     const id=idOf(x);
     const qty=state.qty[id]??'';
-    const total=x.easy!=null&&qty!==''?x.easy*Number(qty):0;
+    const easy=easyValue(x);
+    const total=easy!=null&&qty!==''?easy*Number(qty):0;
     const icon=ICONS[x.item]||'';
-    return `<article class="item ${x.easy==null?'off':''}">
+    return `<article class="item ${easy==null?'off':''}">
       <div class="itemTop">
         <div class="nameWrap">
           ${icon?`<img src="${safe(icon)}" class="icon" loading="lazy" alt="">`:''}
           <div class="name">${safe(x.item)}</div>
         </div>
-        <div class="pill">${x.easy==null?'Skip':money(x.easy)}</div>
+        <div class="pill">${easy==null?'Skip':money(easy)}</div>
       </div>
       <div class="prices"><span>Ideal <b>${money(x.ideal)}</b></span><span>OK <b>${money(x.realistic)}</b></span></div>
-      <div class="qtyline"><input type="text" inputmode="numeric" pattern="[0-9]*" autocomplete="off" placeholder="Qty" value="${safe(qty)}" data-id="${safe(id)}" data-easy="${x.easy??''}" ${x.easy==null?'disabled':''}><div class="total" data-total-for="${safe(id)}">${total?money(total):'$0.00'}</div></div>
+      <div class="qtyline"><input type="text" inputmode="numeric" pattern="[0-9]*" autocomplete="off" placeholder="Qty" value="${safe(qty)}" data-id="${safe(id)}" data-easy="${easy??''}" ${easy==null?'disabled':''}><div class="total" data-total-for="${safe(id)}">${total?money(total):'$0.00'}</div></div>
       ${x.note?`<div class="note">${safe(x.note)}</div>`:''}
     </article>`
   }).join('');
@@ -192,8 +197,9 @@ function updateSummary(){
   const price=Number($('price').value||0);
   let value=0,used=0;
   DATA.forEach(x=>{
+    const easy=easyValue(x);
     const qty=Number(state.qty[idOf(x)]||0);
-    if(x.easy!=null&&qty>0){value+=qty*x.easy;used++;}
+    if(easy!=null&&qty>0){value+=qty*easy;used++;}
   });
   const diff=value-price,ratio=price?value/price:0;
   $('mPrice').textContent=money(price);
