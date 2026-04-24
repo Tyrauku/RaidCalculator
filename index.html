@@ -1,60 +1,226 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Tyrauku's Raid Offer Calculator</title>
-  <style>
-    :root{--bg:#070a12;--bg2:#101827;--card:#151d2e;--text:#f7f2df;--muted:#aeb8cc;--line:rgba(255,255,255,.12);--gold:#f5c84b;--green:#35d07f;--red:#ff6262;--blue:#77a7ff;--shadow:0 18px 50px rgba(0,0,0,.35)}
-    *{box-sizing:border-box}body{margin:0;font-family:Inter,system-ui,Segoe UI,Arial,sans-serif;background:radial-gradient(circle at top left,rgba(245,200,75,.18),transparent 34%),radial-gradient(circle at 85% 10%,rgba(119,167,255,.14),transparent 30%),linear-gradient(180deg,var(--bg),var(--bg2));color:var(--text);min-height:100vh}.wrap{max-width:1280px;margin:auto;padding:18px}header{text-align:center;margin-bottom:18px}h1{margin:0;font-size:clamp(28px,4vw,48px);letter-spacing:-.04em;line-height:1}.subtitle{color:var(--muted);margin-top:8px;font-size:14px}.gold{color:var(--gold)}.headerLinks{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:12px}.headerLinks a{display:inline-flex;align-items:center;justify-content:center;padding:9px 14px;border-radius:999px;text-decoration:none;font-weight:900;border:1px solid var(--line);background:rgba(255,255,255,.06)}.headerLinks a:first-child{color:#070a12;background:linear-gradient(180deg,#f5c84b,#d9a92e);border-color:rgba(245,200,75,.65)}.headerLinks a:last-child{color:#fff;background:linear-gradient(180deg,#5865F2,#3542bd);border-color:rgba(119,167,255,.65)}.top{position:sticky;top:0;z-index:10;background:linear-gradient(180deg,rgba(7,10,18,.98),rgba(7,10,18,.88));backdrop-filter:blur(12px);padding:12px 0;margin-bottom:14px;border-bottom:1px solid var(--line)}.panel{background:linear-gradient(180deg,rgba(28,39,64,.95),rgba(21,29,46,.95));border:1px solid var(--line);border-radius:18px;box-shadow:var(--shadow)}.controls{display:grid;grid-template-columns:180px 1fr auto auto;gap:10px;padding:12px;align-items:end}label{display:block;color:var(--muted);font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;margin:0 0 5px}input{width:100%;border:1px solid var(--line);background:#0b1120;color:var(--text);border-radius:12px;padding:11px 12px;font-size:15px;outline:none}input:focus{border-color:var(--gold);box-shadow:0 0 0 3px rgba(245,200,75,.12)}button{border:1px solid var(--line);background:linear-gradient(180deg,#263552,#172239);color:var(--text);border-radius:12px;padding:11px 14px;font-weight:800;cursor:pointer;white-space:nowrap}button:hover{border-color:var(--gold);transform:translateY(-1px)}.summary{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;padding:0 12px 12px}.metric{background:rgba(7,10,18,.42);border:1px solid var(--line);border-radius:14px;padding:12px}.metric span{display:block;color:var(--muted);font-size:12px}.metric b{display:block;font-size:clamp(22px,3vw,34px);letter-spacing:-.04em;margin-top:2px}.status{margin:0 12px 12px;padding:11px;border-radius:14px;text-align:center;font-weight:900;border:1px solid var(--line)}.good{background:rgba(53,208,127,.14);color:#9af3c1}.fair{background:rgba(245,200,75,.13);color:#ffe08a}.bad{background:rgba(255,98,98,.12);color:#ffb0b0}.neutral{background:rgba(119,167,255,.12);color:#cfe0ff}.tabs{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0}.tab{padding:10px 13px;border-radius:999px;background:rgba(255,255,255,.06);border:1px solid var(--line);cursor:pointer;font-weight:800;color:var(--muted)}.tab.active{background:linear-gradient(180deg,rgba(245,200,75,.28),rgba(245,200,75,.12));color:var(--text);border-color:rgba(245,200,75,.55)}.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:10px}.item{background:linear-gradient(180deg,rgba(28,39,64,.92),rgba(18,25,40,.92));border:1px solid var(--line);border-radius:16px;padding:11px;position:relative;overflow:hidden}.item::before{content:"";position:absolute;inset:0 auto 0 0;width:3px;background:linear-gradient(var(--gold),transparent);opacity:.7}.item.off{opacity:.48}.itemTop{display:flex;justify-content:space-between;gap:8px;align-items:flex-start}.itemNameGroup{display:flex;align-items:center;gap:8px;min-width:0}.icon{width:34px;height:34px;object-fit:contain;flex:0 0 34px;filter:drop-shadow(0 4px 6px rgba(0,0,0,.35))}.name{font-weight:900;line-height:1.15}.pill{font-size:12px;font-weight:900;color:#ffe08a;background:rgba(245,200,75,.12);border:1px solid rgba(245,200,75,.34);padding:4px 8px;border-radius:999px;white-space:nowrap}.prices{display:flex;gap:8px;flex-wrap:wrap;color:var(--muted);font-size:12px;margin:8px 0}.prices b{color:var(--text)}.qtyline{display:grid;grid-template-columns:1fr 92px;gap:8px;align-items:center}.qtyline input{padding:9px 10px}.total{text-align:right;font-weight:900;color:#dce8ff}.note{font-size:11px;color:var(--muted);margin-top:7px;line-height:1.25}.footer{color:var(--muted);font-size:12px;text-align:center;padding:24px 0}@media(max-width:780px){.controls{grid-template-columns:1fr 1fr}.summary{grid-template-columns:1fr 1fr}.top{position:static}.grid{grid-template-columns:1fr 1fr}.wrap{padding:12px}}@media(max-width:520px){.grid{grid-template-columns:1fr}.controls{grid-template-columns:1fr}.summary{grid-template-columns:1fr 1fr}}
-  </style>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Tyrauku's Raid Offer Calculator</title>
+
+<style>
+:root{
+--bg:#070a12;--bg2:#101827;--card:#151d2e;
+--text:#f7f2df;--muted:#aeb8cc;--line:rgba(255,255,255,.12);
+--gold:#f5c84b;--green:#35d07f;--red:#ff6262;--blue:#5865F2;
+}
+*{box-sizing:border-box}
+body{
+margin:0;
+font-family:Inter,system-ui;
+background:linear-gradient(180deg,var(--bg),var(--bg2));
+color:var(--text);
+}
+
+.wrap{max-width:1200px;margin:auto;padding:16px}
+
+/* HEADER */
+header{
+text-align:center;
+margin-bottom:20px;
+}
+
+.gold{color:var(--gold)}
+
+.subtitle{
+color:var(--muted);
+margin-top:6px;
+}
+
+/* LINKS */
+.link {
+  text-decoration: none;
+  font-weight: bold;
+  margin: 0 12px;
+  transition: 0.2s;
+  font-size: 18px;
+}
+
+.link:hover {
+  opacity: 0.8;
+  text-decoration: underline;
+}
+
+.youtube { color: #f5c84b; }
+.discord { color: #5865F2; }
+.takeover { color: #35d07f; }
+
+/* GRID */
+.grid{
+display:grid;
+grid-template-columns:repeat(auto-fill,minmax(220px,1fr));
+gap:10px;
+}
+
+.item{
+background:#151d2e;
+border:1px solid var(--line);
+border-radius:12px;
+padding:10px;
+}
+
+.itemTop{
+display:flex;
+align-items:center;
+gap:8px;
+}
+
+.icon{
+width:32px;
+height:32px;
+object-fit:contain;
+}
+
+.name{font-weight:bold}
+
+.qtyline{
+display:flex;
+justify-content:space-between;
+margin-top:6px;
+}
+
+input{
+width:80px;
+padding:6px;
+border-radius:6px;
+border:1px solid var(--line);
+background:#0b1120;
+color:white;
+}
+</style>
 </head>
+
 <body>
-  <div class="wrap">
-   <header>
-  <div style="text-align:center;">
-    <h1>Tyrauku's <span class="gold">Raid Offer Calculator</span></h1>
 
-    <div class="subtitle" style="margin-top:8px;">
-      Enter quantities, compare the pack price, and instantly see if it beats your target values.
-    </div>
+<div class="wrap">
 
-    <div style="margin-top:12px; display:flex; justify-content:center; gap:12px; flex-wrap:wrap;">
+<header>
+<h1>Tyrauku's <span class="gold">Raid Offer Calculator</span></h1>
 
-      <a href="https://www.youtube.com/@TyRaids" target="_blank" class="btn-link youtube">
-        YouTube
-      </a>
+<div class="subtitle">
+Enter quantities, compare the pack price, and instantly see if it beats your target values.
+</div>
 
-      <a href="https://discord.gg/tgmgTc7YpP" target="_blank" class="btn-link discord">
-        Discord
-      </a>
+<div style="margin-top:12px; display:flex; justify-content:center; gap:18px; flex-wrap:wrap;">
+  <a href="https://www.youtube.com/@TyRaids" target="_blank" class="link youtube">YouTube</a>
+  <a href="https://discord.gg/tgmgTc7YpP" target="_blank" class="link discord">Discord</a>
+  <a href="https://form.jotform.com/220255898373061" target="_blank" class="link takeover">Takeovers</a>
+</div>
 
-      <a href="https://form.jotform.com/220255898373061" target="_blank" class="btn-link takeover">
-        Takeovers
-      </a>
-
-    </div>
-  </div>
 </header>
-    <div class="top"><div class="panel"><div class="controls"><div><label>Pack Price</label><input id="price" type="number" min="0" step="0.01" placeholder="9.99"></div><div><label>Search Items</label><input id="search" type="text" placeholder="Ancient, energy, chickens..."></div><button id="clearQty" type="button">Clear Qty</button><button id="clearAll" type="button">Reset All</button></div><div class="summary"><div class="metric"><span>Pack Price</span><b id="mPrice">$0.00</b></div><div class="metric"><span>Added Value</span><b id="mValue">$0.00</b></div><div class="metric"><span>Difference</span><b id="mDiff">$0.00</b></div><div class="metric"><span>Value Ratio</span><b id="mRatio">0.00x</b></div></div><div id="status" class="status neutral">Add quantities to evaluate a pack.</div></div></div>
-    <div id="tabs" class="tabs"></div><main id="items" class="grid"></main><div class="footer">Easy Adding Number = your chosen decision price. Pack is good when Added Value is higher than Pack Price.</div>
-  </div>
+
+<input id="price" placeholder="Pack Price" type="number" style="margin-bottom:10px">
+
+<div id="items" class="grid"></div>
+
+<h2 id="result"></h2>
+
+</div>
+
 <script>
-const DATA=[
-{section:'Regular Purchases',item:'Ancient Shard',ideal:.90,realistic:1.15,easy:.98,icon:'ancient.png'},{section:'Regular Purchases',item:'Void Shard',ideal:2,realistic:2.5,easy:2.15,icon:'void.png'},{section:'Regular Purchases',item:'Sacred Shard',ideal:7,realistic:15,easy:9.4,icon:'sacred.png'},{section:'Regular Purchases',item:'Primal Shard',ideal:4,realistic:5,easy:4.3,icon:'primal.png'},{section:'Regular Purchases',item:'Energy',ideal:.00333,realistic:.005,easy:.00383,icon:'energy.png'},{section:'Regular Purchases',item:'Energy Refills',ideal:.43,realistic:.65,easy:.5,icon:'energyrefill.png'},{section:'Regular Purchases',item:'Gems',ideal:.01,realistic:.016,easy:.01,icon:'gem.png'},{section:'Regular Purchases',item:'Legendary Books',ideal:3.5,realistic:5,easy:3.95,icon:'legendary.png'},{section:'Regular Purchases',item:'Mythical Books',ideal:5,realistic:8,easy:5.9,icon:'mythical.png'},{section:'Regular Purchases',item:'Mortal Soulstone',ideal:.5,realistic:.8,easy:.59,icon:'mortal.png'},{section:'Regular Purchases',item:'Immortal Soulstone',ideal:4,realistic:5,easy:4.3,icon:'immortal.png'},{section:'Regular Purchases',item:'Eternal Soulstone',ideal:20,realistic:25,easy:21.5,icon:'eternal.png'},{section:'Regular Purchases',item:'2* Basalt',ideal:null,realistic:.41,easy:.12,icon:'basalt.png'},{section:'Regular Purchases',item:'3* Basalt',ideal:null,realistic:1.25,easy:.38,icon:'basalt.png'},{section:'Regular Purchases',item:'4* Basalt',ideal:null,realistic:5,easy:1.5,icon:'basalt.png'},{section:'Regular Purchases',item:'Starstone',ideal:.0055,realistic:.0066,easy:.0058,icon:'starstone.png'},
-{section:'As Needed',item:'Epic Books',ideal:2,realistic:3,easy:2.3,icon:'epic.png'},{section:'As Needed',item:'Rare Books',ideal:null,realistic:null,easy:null},{section:'As Needed',item:'Brews',ideal:.0093,realistic:null,easy:.0065,icon:'brew.png',note:'Based on pricing of barrels'},{section:'As Needed',item:'Barrel',ideal:1,realistic:null,easy:.7,icon:'barrel.png',note:'Higher value on rank 6 champs. About 200 energy worth of XP from 1-60.'},{section:'As Needed',item:'XP Boost',ideal:null,realistic:null,easy:null,note:'Shop has them for 140 gems; usually not worth factoring.'},{section:'As Needed',item:'4* Chickens',ideal:1,realistic:1.25,easy:1.08,icon:'chicken.png'},{section:'As Needed',item:'5* Chickens',ideal:5,realistic:6,easy:5.3,icon:'chicken.png'},{section:'As Needed',item:'Feast',ideal:25,realistic:30,easy:26.5,icon:'feast.png',note:'Higher value when used on low rank champs.'},
-{section:'Included in Packs',item:'Clan Boss Key',ideal:null,realistic:null,easy:null},{section:'Included in Packs',item:'Arena Refills',ideal:.43,realistic:.65,easy:.5,icon:'arenarefill.jpg'},{section:'Included in Packs',item:'2* Chickens',ideal:null,realistic:null,easy:null},{section:'Included in Packs',item:'3* Chickens',ideal:null,realistic:null,easy:null},{section:'Included in Packs',item:'Tag Arena Refills',ideal:.43,realistic:.65,easy:.5,icon:'tagrefill.jpg'},{section:'Included in Packs',item:'5* Epic Chaos Ore',ideal:null,realistic:null,easy:null},{section:'Included in Packs',item:'6* Epic Chaos Ore',ideal:null,realistic:null,easy:null},{section:'Included in Packs',item:'5* Leg Chaos Ore',ideal:null,realistic:null,easy:null},{section:'Included in Packs',item:'6* Leg Chaos Ore',ideal:null,realistic:null,easy:null},{section:'Included in Packs',item:'Multi-battles',ideal:null,realistic:null,easy:null},{section:'Included in Packs',item:'Plarium Play Points',ideal:null,realistic:null,easy:null},{section:'Included in Packs',item:'Silver',ideal:null,realistic:null,easy:null},
-{section:'Never Purchased',item:'Lesser Artifact Oil',ideal:null,realistic:null,easy:null},{section:'Never Purchased',item:'Greater Artifact Oil',ideal:null,realistic:null,easy:null},{section:'Never Purchased',item:'Superior Artifact Oil',ideal:null,realistic:null,easy:null},{section:'Never Purchased',item:'Lesser Potions',ideal:null,realistic:null,easy:null},{section:'Never Purchased',item:'Greater Potions',ideal:null,realistic:null,easy:null},{section:'Never Purchased',item:'Superior Potions',ideal:null,realistic:null,easy:null}
+
+const ICONS = {
+"Ancient Shard":"./ancient.png",
+"Void Shard":"./void.png",
+"Sacred Shard":"./sacred.png",
+"Primal Shard":"./primal.png",
+"Energy":"./energy.png",
+"Energy Refills":"./lightning.png",
+"Gems":"./gem.png",
+"Silver":"./silver.png",
+"Barrel":"./barrel.png",
+"Brews":"./brew.png"
+};
+
+const DATA = [
+{item:'Ancient Shard',easy:.98},
+{item:'Void Shard',easy:2.15},
+{item:'Sacred Shard',easy:9.4},
+{item:'Primal Shard',easy:4.3},
+{item:'Energy',easy:.00383},
+{item:'Energy Refills',easy:.5},
+{item:'Gems',easy:.01},
+{item:'Legendary Books',easy:3.95},
+{item:'Mythical Books',easy:5.9},
+{item:'Mortal Soulstone',easy:.59},
+{item:'Immortal Soulstone',easy:4.3},
+{item:'Eternal Soulstone',easy:21.5},
+{item:'Barrel',easy:.7},
+{item:'Brews',easy:.0065},
+{item:'4* Chickens',easy:1.08},
+{item:'5* Chickens',easy:5.3}
 ];
-const $=id=>document.getElementById(id);const saved=JSON.parse(localStorage.getItem('raidPackValueState')||'{}');const state={qty:{},price:'',section:'All',...saved};let currentSection=state.section||'All';
-function money(n){if(n==null||Number.isNaN(Number(n)))return'Not Factoring';const num=Number(n);return'$'+num.toLocaleString(undefined,{minimumFractionDigits:Math.abs(num)<.01&&num!==0?4:2,maximumFractionDigits:Math.abs(num)<.01&&num!==0?5:2});}
-function safe(s){return String(s).replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;');}
-function idOf(x){return x.section+'|'+x.item}function save(){state.price=$('price').value;state.section=currentSection;localStorage.setItem('raidPackValueState',JSON.stringify(state));}
-function renderTabs(){const sections=['All',...new Set(DATA.map(x=>x.section))];$('tabs').innerHTML=sections.map(s=>`<button type="button" class="tab ${s===currentSection?'active':''}" data-section="${safe(s)}">${safe(s)}</button>`).join('');document.querySelectorAll('.tab').forEach(btn=>btn.addEventListener('click',()=>{currentSection=btn.dataset.section;save();renderTabs();renderItems();}));}
-function renderItems(){const q=$('search').value.toLowerCase().trim();const rows=DATA.filter(x=>(currentSection==='All'||x.section===currentSection)&&(!q||x.item.toLowerCase().includes(q)));$('items').innerHTML=rows.map(x=>{const id=idOf(x);const qty=state.qty[id]??'';const total=x.easy!=null&&qty!==''?x.easy*Number(qty):0;const icon=x.icon?`<img src="./${safe(x.icon)}" class="icon" loading="lazy" alt="">`:'';return `<article class="item ${x.easy==null?'off':''}"><div class="itemTop"><div class="itemNameGroup">${icon}<div class="name">${safe(x.item)}</div></div><div class="pill">${x.easy==null?'Skip':money(x.easy)}</div></div><div class="prices"><span>Ideal <b>${money(x.ideal)}</b></span><span>OK <b>${money(x.realistic)}</b></span></div><div class="qtyline"><input type="text" inputmode="numeric" pattern="[0-9]*" autocomplete="off" placeholder="Qty" value="${safe(qty)}" data-id="${safe(id)}" data-easy="${x.easy??''}" ${x.easy==null?'disabled':''}><div class="total" data-total-for="${safe(id)}">${total?money(total):'$0.00'}</div></div>${x.note?`<div class="note">${safe(x.note)}</div>`:''}</article>`}).join('');document.querySelectorAll('input[data-id]').forEach(input=>input.addEventListener('input',onQtyInput));updateSummary();}
-function onQtyInput(e){const input=e.target;const id=input.dataset.id;const easy=Number(input.dataset.easy||0);const cleaned=input.value.replace(/\D/g,'');if(input.value!==cleaned)input.value=cleaned;if(cleaned==='')delete state.qty[id];else state.qty[id]=cleaned;const lineTotal=cleaned===''?0:Number(cleaned)*easy;const totalEl=document.querySelector(`[data-total-for="${CSS.escape(id)}"]`);if(totalEl)totalEl.textContent=lineTotal?money(lineTotal):'$0.00';updateSummary();save();}
-function updateSummary(){const price=Number($('price').value||0);let value=0,used=0;DATA.forEach(x=>{const qty=Number(state.qty[idOf(x)]||0);if(x.easy!=null&&qty>0){value+=qty*x.easy;used++;}});const diff=value-price,ratio=price?value/price:0;$('mPrice').textContent=money(price);$('mValue').textContent=money(value);$('mDiff').textContent=money(diff);$('mRatio').textContent=price?ratio.toFixed(2)+'x':'0.00x';const st=$('status');st.className='status neutral';if(!used)st.textContent='Add quantities to evaluate a pack.';else if(!price)st.textContent='Now enter the pack price.';else if(ratio>=1.15){st.className='status good';st.textContent='GOOD DEAL — value is comfortably above the pack price.'}else if(ratio>=.95){st.className='status fair';st.textContent='FAIR / CLOSE — roughly around your target value.'}else{st.className='status bad';st.textContent='SKIP — based on your values, this is below target.'}}
-$('price').value=state.price||'';$('price').addEventListener('input',()=>{updateSummary();save();});$('search').addEventListener('input',renderItems);$('clearQty').addEventListener('click',()=>{state.qty={};save();renderItems();});$('clearAll').addEventListener('click',()=>{state.qty={};state.price='';$('price').value='';save();renderItems();});renderTabs();renderItems();
+
+const container = document.getElementById("items");
+
+DATA.forEach(x=>{
+const div=document.createElement("div");
+div.className="item";
+
+const icon = ICONS[x.item] || "";
+
+div.innerHTML=`
+<div class="itemTop">
+${icon ? `<img src="${icon}" class="icon" loading="lazy">` : ''}
+<div class="name">${x.item}</div>
+</div>
+
+<div class="qtyline">
+<input type="text" inputmode="numeric" pattern="[0-9]*" data-value="${x.easy}">
+<div>$${x.easy}</div>
+</div>
+`;
+
+container.appendChild(div);
+});
+
+function update(){
+let total=0;
+
+document.querySelectorAll("input[data-value]").forEach(input=>{
+const qty = parseInt(input.value) || 0;
+const val = parseFloat(input.dataset.value);
+total += qty * val;
+});
+
+const price = parseFloat(document.getElementById("price").value) || 0;
+
+let result = document.getElementById("result");
+
+if(!price){
+result.innerText = "Enter pack price";
+return;
+}
+
+let ratio = total / price;
+
+if(ratio > 1.15){
+result.innerText = "GOOD DEAL 🔥";
+result.style.color="lime";
+}
+else if(ratio > .95){
+result.innerText = "FAIR";
+result.style.color="gold";
+}
+else{
+result.innerText = "SKIP";
+result.style.color="red";
+}
+
+}
+
+document.querySelectorAll("input").forEach(i=>{
+i.addEventListener("input",update);
+});
+
 </script>
+
 </body>
 </html>
