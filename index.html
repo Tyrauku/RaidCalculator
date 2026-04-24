@@ -1,178 +1,123 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Predator's Path — Event Planner</title>
+  <title>Raid Pack Value Checker</title>
   <style>
-    :root{ --bg:#0e0f13; --card:#161922; --muted:#8b93a7; --txt:#e7ecf3; --accent:#ff4444; --warn:#ffb86b; }
+    :root{
+      --bg:#070a12; --bg2:#101827; --card:#151d2e; --card2:#1c2740;
+      --text:#f7f2df; --muted:#aeb8cc; --line:rgba(255,255,255,.12);
+      --gold:#f5c84b; --gold2:#8f6420; --green:#35d07f; --red:#ff6262; --blue:#77a7ff;
+      --shadow:0 18px 50px rgba(0,0,0,.35);
+    }
     *{box-sizing:border-box}
-    body{margin:0;background:#0b0c10;color:var(--txt);font-family:Inter,system-ui,Segoe UI,Roboto,Helvetica,Arial,sans-serif}
-    header{position:sticky;top:0;z-index:10;background:rgba(14,15,19,.7);backdrop-filter:blur(8px);border-bottom:1px solid #222834}
-    .wrap{max-width:1000px;margin:0 auto;padding:18px}
-    h1{margin:0;font-size:22px;letter-spacing:.2px;color:var(--accent)}
-
-    .summary{display:grid;gap:12px;grid-template-columns:2fr 1fr 1fr 1fr;align-items:stretch;margin:14px 0}
-    .card{background:var(--card);border:1px solid #232835;border-radius:16px;padding:14px 16px;box-shadow:0 6px 18px rgba(0,0,0,.25)}
-    .card h3{margin:0 0 8px 0;font-weight:600;font-size:13px;color:var(--muted);text-transform:uppercase;letter-spacing:.8px}
-    .card .value{font-size:28px;font-weight:800}
-    .value small{font-weight:600;color:var(--muted);font-size:13px}
-    .progress{height:12px;background:#0f1320;border:1px solid #273047;border-radius:999px;overflow:hidden}
-    .progress > div{height:100%;background:linear-gradient(90deg,#ff4444,#ff8800);width:0%;transition:width .25s ease}
-
-    .controls{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin:12px 0}
-    .controls input[type="number"], .controls select{background:#0f1320;border:1px solid #273047;border-radius:10px;color:var(--txt);padding:10px 12px;width:100%}
-    label span{display:block;font-size:12px;color:var(--muted);margin-bottom:6px}
-
-    .section{margin:20px 0}
-    .panel{background:var(--card);border:1px solid #232835;border-radius:16px;padding:16px}
-    .panel h3{margin:0 0 12px 0;font-size:16px;color:var(--accent)}
-
-    .grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-    .grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
-    .muted{color:var(--muted);font-size:12px}
-    input[readonly]{background:#1a1d28;color:#b8bccf;border:1px solid #273047}
-
-    @media (max-width:900px){ .summary{grid-template-columns:1fr 1fr} .controls{grid-template-columns:1fr} .grid2,.grid3{grid-template-columns:1fr} }
+    body{margin:0;font-family:Inter,system-ui,Segoe UI,Arial,sans-serif;background:
+      radial-gradient(circle at top left,rgba(245,200,75,.18),transparent 34%),
+      radial-gradient(circle at 85% 10%,rgba(119,167,255,.14),transparent 30%),
+      linear-gradient(180deg,var(--bg),var(--bg2)); color:var(--text); min-height:100vh;}
+    .wrap{max-width:1280px;margin:auto;padding:18px}
+    header{display:flex;justify-content:space-between;gap:16px;align-items:flex-end;margin-bottom:14px}
+    h1{margin:0;font-size:clamp(26px,4vw,46px);letter-spacing:-.04em;line-height:1}
+    .subtitle{color:var(--muted);margin-top:6px;font-size:14px}.gold{color:var(--gold)}
+    .top{position:sticky;top:0;z-index:10;background:linear-gradient(180deg,rgba(7,10,18,.98),rgba(7,10,18,.88));backdrop-filter:blur(12px);padding:12px 0;margin-bottom:14px;border-bottom:1px solid var(--line)}
+    .panel{background:linear-gradient(180deg,rgba(28,39,64,.95),rgba(21,29,46,.95));border:1px solid var(--line);border-radius:18px;box-shadow:var(--shadow)}
+    .controls{display:grid;grid-template-columns:180px 1fr auto auto;gap:10px;padding:12px;align-items:end}
+    label{display:block;color:var(--muted);font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;margin:0 0 5px}
+    input,select{width:100%;border:1px solid var(--line);background:#0b1120;color:var(--text);border-radius:12px;padding:11px 12px;font-size:15px;outline:none} input:focus{border-color:var(--gold);box-shadow:0 0 0 3px rgba(245,200,75,.12)}
+    button{border:1px solid var(--line);background:linear-gradient(180deg,#263552,#172239);color:var(--text);border-radius:12px;padding:11px 14px;font-weight:800;cursor:pointer;white-space:nowrap}button:hover{border-color:var(--gold);transform:translateY(-1px)}
+    .summary{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;padding:0 12px 12px}.metric{background:rgba(7,10,18,.42);border:1px solid var(--line);border-radius:14px;padding:12px}.metric span{display:block;color:var(--muted);font-size:12px}.metric b{display:block;font-size:clamp(22px,3vw,34px);letter-spacing:-.04em;margin-top:2px}.status{margin:0 12px 12px;padding:11px;border-radius:14px;text-align:center;font-weight:900;border:1px solid var(--line)}.good{background:rgba(53,208,127,.14);color:#9af3c1}.fair{background:rgba(245,200,75,.13);color:#ffe08a}.bad{background:rgba(255,98,98,.12);color:#ffb0b0}.neutral{background:rgba(119,167,255,.12);color:#cfe0ff}
+    .tabs{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0}.tab{padding:10px 13px;border-radius:999px;background:rgba(255,255,255,.06);border:1px solid var(--line);cursor:pointer;font-weight:800;color:var(--muted)}.tab.active{background:linear-gradient(180deg,rgba(245,200,75,.28),rgba(245,200,75,.12));color:var(--text);border-color:rgba(245,200,75,.55)}
+    .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:10px}.item{background:linear-gradient(180deg,rgba(28,39,64,.92),rgba(18,25,40,.92));border:1px solid var(--line);border-radius:16px;padding:11px;position:relative;overflow:hidden}.item::before{content:"";position:absolute;inset:0 auto 0 0;width:3px;background:linear-gradient(var(--gold),transparent);opacity:.7}.item.off{opacity:.48}.itemTop{display:flex;justify-content:space-between;gap:8px;align-items:flex-start}.name{font-weight:900;line-height:1.15}.pill{font-size:12px;font-weight:900;color:#ffe08a;background:rgba(245,200,75,.12);border:1px solid rgba(245,200,75,.34);padding:4px 8px;border-radius:999px;white-space:nowrap}.prices{display:flex;gap:8px;flex-wrap:wrap;color:var(--muted);font-size:12px;margin:8px 0}.prices b{color:var(--text)}.qtyline{display:grid;grid-template-columns:1fr 92px;gap:8px;align-items:center}.qtyline input{padding:9px 10px}.total{text-align:right;font-weight:900;color:#dce8ff}.note{font-size:11px;color:var(--muted);margin-top:7px;line-height:1.25}
+    .footer{color:var(--muted);font-size:12px;text-align:center;padding:24px 0}.hidden{display:none!important}
+    @media(max-width:780px){.controls{grid-template-columns:1fr 1fr}.summary{grid-template-columns:1fr 1fr}header{display:block}.top{position:static}.grid{grid-template-columns:1fr 1fr}.wrap{padding:12px}}
+    @media(max-width:520px){.grid{grid-template-columns:1fr}.controls{grid-template-columns:1fr}.summary{grid-template-columns:1fr 1fr}}
   </style>
 </head>
 <body>
-  <header>
-    <div class="wrap">
-      <h1>Predator's Path — Event Planner</h1>
-      <div class="summary">
-        <div class="card">
-          <h3>Goal</h3>
-          <div>
-            <select id="goalSelect" style="width:100%">
-              <option value="96750">96,750 — Predator 5★ Soul</option>
-              <option value="96750">96,750 — Eternal Soulstone</option>
-            </select>
-          </div>
-          <div class="muted">Or override with a custom target below.</div>
-        </div>
-        <div class="card">
-          <h3>Coins Needed</h3>
-          <div class="value"><span id="pointsNeeded">96,750</span></div>
-          <div class="progress" style="margin-top:8px"><div id="progressBar"></div></div>
-        </div>
-        <div class="card">
-          <h3>Coins Planned</h3>
-          <div class="value" id="currentPoints">0</div>
-        </div>
-        <div class="card">
-          <h3>Remaining</h3>
-          <div class="value" id="remainingPoints">96,750</div>
-        </div>
-      </div>
+  <div class="wrap">
+    <header>
+      <div><h1>Raid <span class="gold">Pack Value</span> Checker</h1><div class="subtitle">Enter quantities, compare the pack price, and instantly see if it beats your target values.</div></div>
+    </header>
 
-      <div class="controls">
-        <label>
-          <span>Custom Target (optional)</span>
-          <input type="number" id="targetInput" placeholder="e.g., 96750" min="0" />
-        </label>
-        <label>
-          <span>Current Coins Already Earned</span>
-          <input type="number" id="alreadyCoins" placeholder="e.g., 4000" min="0" />
-        </label>
+    <div class="top">
+      <div class="panel">
+        <div class="controls">
+          <div><label>Pack Price</label><input id="price" type="number" min="0" step="0.01" placeholder="9.99"></div>
+          <div><label>Search Items</label><input id="search" type="text" placeholder="Ancient, energy, chickens..."></div>
+          <button id="clearQty">Clear Qty</button><button id="clearAll">Reset All</button>
+        </div>
+        <div class="summary">
+          <div class="metric"><span>Pack Price</span><b id="mPrice">$0.00</b></div>
+          <div class="metric"><span>Added Value</span><b id="mValue">$0.00</b></div>
+          <div class="metric"><span>Difference</span><b id="mDiff">$0.00</b></div>
+          <div class="metric"><span>Value Ratio</span><b id="mRatio">0.00x</b></div>
+        </div>
+        <div id="status" class="status neutral">Add quantities to evaluate a pack.</div>
       </div>
     </div>
-  </header>
 
-  <main class="wrap">
-    <div class="section panel">
-      <h3>Energy Plan</h3>
-      <div class="grid3">
-        <label>
-          <span>10 Hard — Energy Planned</span>
-          <input type="number" id="energy10H" min="0" placeholder="e.g., 5000" />
-        </label>
-        <label>
-          <span>Coins per Energy (10H)</span>
-          <input type="text" id="cpe10H" value="1.92 × Energy" readonly />
-        </label>
-        <label>
-          <span>Subtotal Coins (10H)</span>
-          <input type="text" id="coins10H" value="0 × 1.92 = 0" readonly />
-        </label>
-      </div>
-      <div class="grid3" style="margin-top:10px">
-        <label>
-          <span>20 Normal — Energy Planned</span>
-          <input type="number" id="energy20N" min="0" placeholder="e.g., 5000" />
-        </label>
-        <label>
-          <span>Coins per Energy (20N)</span>
-          <input type="text" id="cpe20N" value="2.16 × Energy" readonly />
-        </label>
-        <label>
-          <span>Subtotal Coins (20N)</span>
-          <input type="text" id="coins20N" value="0 × 2.16 = 0" readonly />
-        </label>
-      </div>
-      <p class="muted" style="margin-top:8px">Multipliers use standard dungeon drop-rate math.</p>
-    </div>
+    <div id="tabs" class="tabs"></div>
+    <main id="items" class="grid"></main>
+    <div class="footer">Easy Adding Number = your chosen decision price. Pack is good when Added Value is higher than Pack Price.</div>
+  </div>
 
-    <div class="section panel">
-      <h3>Shards You Plan to Open</h3>
-      <div class="grid2">
-        <label>
-          <span>Mystery Shards ×</span>
-          <input type="number" id="mysteryQty" min="0" placeholder="0" />
-        </label>
-        <label>
-          <span>Ancient Shards ×</span>
-          <input type="number" id="ancientQty" min="0" placeholder="0" />
-        </label>
-      </div>
-      <div class="grid2" style="margin-top:10px">
-        <label>
-          <span>Void Shards ×</span>
-          <input type="number" id="voidQty" min="0" placeholder="0" />
-        </label>
-        <label>
-          <span>Primal Shards ×</span>
-          <input type="number" id="primalQty" min="0" placeholder="0" />
-        </label>
-      </div>
-      <div class="grid2" style="margin-top:10px">
-        <label>
-          <span>Sacred Shards ×</span>
-          <input type="number" id="sacredQty" min="0" placeholder="0" />
-        </label>
-        <div></div>
-      </div>
-      <p class="muted">Shard values: Mystery 3 • Ancient 300 • Void 750 • Primal 1,800 • Sacred 4,500.</p>
-    </div>
-
-    <div class="section panel">
-      <h3>Milestones</h3>
-      <div id="milestones"></div>
-    </div>
-  </main>
-
-  <script>
-    const $ = (s,c=document)=>c.querySelector(s);
-    const num = v => Number(v||0) || 0;
-    const fmt = n => n.toLocaleString(undefined,{maximumFractionDigits:0});
-
-    const MILESTONES = [
-      { name: 'Predator 5★ Soul', pts: 96750 },
-      { name: 'Eternal Soulstone', pts: 96750 },
-    ];
-
-    const SHARD_POINTS = { mystery:3, ancient:300, void:750, primal:1800, sacred:4500 };
-    const CPE_10H = 1.92;
-    const CPE_20N = 2.16;
-
-    const els = {
-      goalSelect: $('#goalSelect'),
-      pointsNeeded: $('#pointsNeeded'),
-      currentPoints: $('#currentPoints'),
-      remainingPoints: $('#remainingPoints'),
-      progressBar: $('#progressBar'),
-      targetInput: $('#targetInput'),
-      alreadyCoins: $('#alreadyCoins'),
-      energy10H: $('#energy10H'), coins10H: $('#coins10H'),
-      energy20N: $('#energy20N'), coins20N: $('#coins20N'),
-      mysteryQty: $('#mysteryQty'), ancientQty: $('#ancientQty'), voidQty: $('#voidQty'), primalQty
+<script>
+const DATA = [
+ {section:'Regular Purchases', item:'Ancient Shard', ideal:.90, realistic:1.15, easy:.98},
+ {section:'Regular Purchases', item:'Void Shard', ideal:2.00, realistic:2.50, easy:2.15},
+ {section:'Regular Purchases', item:'Sacred Shard', ideal:7.00, realistic:15.00, easy:9.40},
+ {section:'Regular Purchases', item:'Primal Shard', ideal:4.00, realistic:5.00, easy:4.30},
+ {section:'Regular Purchases', item:'Energy', ideal:.00333, realistic:.0050, easy:.00383},
+ {section:'Regular Purchases', item:'Energy Refills', ideal:.43, realistic:.65, easy:.50},
+ {section:'Regular Purchases', item:'Gems', ideal:.01, realistic:.016, easy:.01},
+ {section:'Regular Purchases', item:'Legendary Books', ideal:3.50, realistic:5.00, easy:3.95},
+ {section:'Regular Purchases', item:'Mythical Books', ideal:5.00, realistic:8.00, easy:5.90},
+ {section:'Regular Purchases', item:'Mortal Soulstone', ideal:.50, realistic:.80, easy:.59},
+ {section:'Regular Purchases', item:'Immortal Soulstone', ideal:4.00, realistic:5.00, easy:4.30},
+ {section:'Regular Purchases', item:'Eternal Soulstone', ideal:20.00, realistic:25.00, easy:21.50},
+ {section:'Regular Purchases', item:'2* Basalt', ideal:null, realistic:.41, easy:.12},
+ {section:'Regular Purchases', item:'3* Basalt', ideal:null, realistic:1.25, easy:.38},
+ {section:'Regular Purchases', item:'4* Basalt', ideal:null, realistic:5.00, easy:1.50},
+ {section:'Regular Purchases', item:'Starstone', ideal:.0055, realistic:.0066, easy:.0058},
+ {section:'As Needed', item:'Epic Books', ideal:2.00, realistic:3.00, easy:2.30},
+ {section:'As Needed', item:'Rare Books', ideal:null, realistic:null, easy:null},
+ {section:'As Needed', item:'Brews', ideal:.0093, realistic:null, easy:.0065, note:'Based on pricing of barrels'},
+ {section:'As Needed', item:'Barrel', ideal:1.00, realistic:null, easy:.70, note:'Higher value on rank 6 champs. About 200 energy worth of XP from 1-60.'},
+ {section:'As Needed', item:'XP Boost', ideal:null, realistic:null, easy:null, note:'Shop has them for 140 gems; usually not worth factoring.'},
+ {section:'As Needed', item:'4* Chickens', ideal:1.00, realistic:1.25, easy:1.08},
+ {section:'As Needed', item:'5* Chickens', ideal:5.00, realistic:6.00, easy:5.30},
+ {section:'As Needed', item:'Feast', ideal:25.00, realistic:30.00, easy:26.50, note:'Higher value when used on low rank champs.'},
+ {section:'Included in Packs', item:'Clan Boss Key', ideal:null, realistic:null, easy:null},
+ {section:'Included in Packs', item:'Arena Refills', ideal:.43, realistic:.65, easy:.50},
+ {section:'Included in Packs', item:'2* Chickens', ideal:null, realistic:null, easy:null},
+ {section:'Included in Packs', item:'3* Chickens', ideal:null, realistic:null, easy:null},
+ {section:'Included in Packs', item:'Tag Arena Refills', ideal:.43, realistic:.65, easy:.50},
+ {section:'Included in Packs', item:'5* Epic Chaos Ore', ideal:null, realistic:null, easy:null},
+ {section:'Included in Packs', item:'6* Epic Chaos Ore', ideal:null, realistic:null, easy:null},
+ {section:'Included in Packs', item:'5* Leg Chaos Ore', ideal:null, realistic:null, easy:null},
+ {section:'Included in Packs', item:'6* Leg Chaos Ore', ideal:null, realistic:null, easy:null},
+ {section:'Included in Packs', item:'Multi-battles', ideal:null, realistic:null, easy:null},
+ {section:'Included in Packs', item:'Plarium Play Points', ideal:null, realistic:null, easy:null},
+ {section:'Included in Packs', item:'Silver', ideal:null, realistic:null, easy:null},
+ {section:'Never Purchased', item:'Lesser Artifact Oil', ideal:null, realistic:null, easy:null},
+ {section:'Never Purchased', item:'Greater Artifact Oil', ideal:null, realistic:null, easy:null},
+ {section:'Never Purchased', item:'Superior Artifact Oil', ideal:null, realistic:null, easy:null},
+ {section:'Never Purchased', item:'Lesser Potions', ideal:null, realistic:null, easy:null},
+ {section:'Never Purchased', item:'Greater Potions', ideal:null, realistic:null, easy:null},
+ {section:'Never Purchased', item:'Superior Potions', ideal:null, realistic:null, easy:null}
+];
+const $ = id => document.getElementById(id);
+const state = JSON.parse(localStorage.getItem('raidPackValueState') || '{"qty":{},"price":"","section":"All"}');
+$('price').value = state.price || '';
+let currentSection = state.section || 'All';
+function money(n){return n==null?'Not Factoring':'$'+Number(n).toLocaleString(undefined,{minimumFractionDigits:n<.01?4:2,maximumFractionDigits:n<.01?5:2});}
+function idOf(x){return x.section+'|'+x.item;}
+function save(){state.price=$('price').value;state.section=currentSection;localStorage.setItem('raidPackValueState',JSON.stringify(state));}
+function renderTabs(){const sections=['All',...new Set(DATA.map(x=>x.section))];$('tabs').innerHTML=sections.map(s=>`<button class="tab ${s===currentSection?'active':''}" data-s="${s}">${s}</button>`).join('');document.querySelectorAll('.tab').forEach(b=>b.onclick=()=>{currentSection=b.dataset.s;save();render();});}
+function render(){renderTabs();const q=$('search').value.toLowerCase().trim();let rows=DATA.filter(x=>(currentSection==='All'||x.section===currentSection)&&(!q||x.item.toLowerCase().includes(q)));$('items').innerHTML=rows.map(x=>{const id=idOf(x), qty=state.qty[id]||'', total=x.easy&&qty?x.easy*Number(qty):0;return `<article class="item ${x.easy==null?'off':''}"><div class="itemTop"><div class="name">${x.item}</div><div class="pill">${x.easy==null?'Skip':money(x.easy)}</div></div><div class="prices"><span>Ideal <b>${money(x.ideal)}</b></span><span>OK <b>${money(x.realistic)}</b></span></div><div class="qtyline"><input type="number" min="0" step="1" placeholder="Qty" value="${qty}" data-id="${id}" ${x.easy==null?'disabled':''}><div class="total">${total?money(total):'$0.00'}</div></div>${x.note?`<div class="note">${x.note}</div>`:''}</article>`}).join('');document.querySelectorAll('[data-id]').forEach(inp=>inp.oninput=e=>{const id=e.target.dataset.id;if(e.target.value==='')delete state.qty[id];else state.qty[id]=Number(e.target.value);save();render();summary();});summary();}
+function summary(){let price=Number($('price').value||0), value=0, used=0;DATA.forEach(x=>{const q=Number(state.qty[idOf(x)]||0);if(x.easy!=null&&q>0){value+=q*x.easy;used++;}});let diff=value-price, ratio=price?value/price:0;$('mPrice').textContent=money(price);$('mValue').textContent=money(value);$('mDiff').textContent=money(diff);$('mRatio').textContent=price?ratio.toFixed(2)+'x':'0.00x';const st=$('status');st.className='status neutral';if(!used){st.textContent='Add quantities to evaluate a pack.'}else if(!price){st.textContent='Now enter the pack price.'}else if(ratio>=1.15){st.className='status good';st.textContent='GOOD DEAL — value is comfortably above the pack price.'}else if(ratio>=.95){st.className='status fair';st.textContent='FAIR / CLOSE — roughly around your target value.'}else{st.className='status bad';st.textContent='SKIP — based on your values, this is below target.'}save();}
+$('price').oninput=summary;$('search').oninput=render;$('clearQty').onclick=()=>{state.qty={};save();render();};$('clearAll').onclick=()=>{state.qty={};state.price='';$('price').value='';save();render();};render();
+</script>
+</body>
+</html>
