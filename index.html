@@ -9,24 +9,17 @@
 :root{
 --bg:#070a12;--bg2:#101827;--card:#151d2e;
 --text:#f7f2df;--muted:#aeb8cc;--line:rgba(255,255,255,.12);
---gold:#f5c84b;--green:#35d07f;--red:#ff6262;--blue:#77a7ff;
+--gold:#f5c84b;--green:#35d07f;--red:#ff6262;
 }
 *{box-sizing:border-box}
 body{
 margin:0;
-font-family:Inter,system-ui,Segoe UI,Arial,sans-serif;
+font-family:Inter,system-ui;
 background:linear-gradient(180deg,var(--bg),var(--bg2));
 color:var(--text);
 }
 .wrap{max-width:1200px;margin:auto;padding:16px}
-
-h1{margin:0;font-size:32px}
-
-.grid{
-display:grid;
-grid-template-columns:repeat(auto-fill,minmax(220px,1fr));
-gap:10px;
-}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:10px}
 
 .item{
 background:#151d2e;
@@ -47,9 +40,7 @@ height:32px;
 object-fit:contain;
 }
 
-.name{
-font-weight:bold;
-}
+.name{font-weight:bold}
 
 .qtyline{
 display:flex;
@@ -72,16 +63,48 @@ color:white;
 
 <div class="wrap">
 <h1>Raid Pack Value Checker</h1>
+
+<input id="price" placeholder="Pack Price" type="number" style="margin-bottom:10px">
+
 <div id="items" class="grid"></div>
+
+<h2 id="result"></h2>
+
 </div>
 
 <script>
 
+// 🔥 ADD ICON FILE NAMES HERE
+const ICONS = {
+  "Ancient Shard":"./ancient.png",
+  "Void Shard":"./void.png",
+  "Sacred Shard":"./sacred.png",
+  "Primal Shard":"./primal.png",
+  "Energy":"./energy.png",
+  "Energy Refills":"./lightning.png",
+  "Gems":"./gem.png",
+  "Silver":"./silver.png",
+  "Barrel":"./barrel.png",
+  "Brews":"./brew.png"
+};
+
 const DATA = [
-{item:'Ancient Shard',easy:.98,icon:'./ancient.png'},
-{item:'Void Shard',easy:2.15,icon:'./void.png'},
-{item:'Sacred Shard',easy:9.4,icon:'./sacred.png'},
-{item:'Primal Shard',easy:4.3,icon:'./primal.png'}
+{item:'Ancient Shard',easy:.98},
+{item:'Void Shard',easy:2.15},
+{item:'Sacred Shard',easy:9.4},
+{item:'Primal Shard',easy:4.3},
+{item:'Energy',easy:.00383},
+{item:'Energy Refills',easy:.5},
+{item:'Gems',easy:.01},
+{item:'Legendary Books',easy:3.95},
+{item:'Mythical Books',easy:5.9},
+{item:'Mortal Soulstone',easy:.59},
+{item:'Immortal Soulstone',easy:4.3},
+{item:'Eternal Soulstone',easy:21.5},
+{item:'Barrel',easy:.7},
+{item:'Brews',easy:.0065},
+{item:'4* Chickens',easy:1.08},
+{item:'5* Chickens',easy:5.3}
 ];
 
 const container = document.getElementById("items");
@@ -90,19 +113,60 @@ DATA.forEach(x=>{
 const div=document.createElement("div");
 div.className="item";
 
+const icon = ICONS[x.item] || "";
+
 div.innerHTML=`
 <div class="itemTop">
-${x.icon ? `<img src="${x.icon}" class="icon" loading="lazy">` : ''}
+${icon ? `<img src="${icon}" class="icon" loading="lazy">` : ''}
 <div class="name">${x.item}</div>
 </div>
 
 <div class="qtyline">
-<input type="text" inputmode="numeric" pattern="[0-9]*" value="0">
+<input type="text" inputmode="numeric" pattern="[0-9]*" data-value="${x.easy}">
 <div>$${x.easy}</div>
 </div>
 `;
 
 container.appendChild(div);
+});
+
+function update(){
+let total=0;
+
+document.querySelectorAll("input[data-value]").forEach(input=>{
+const qty = parseInt(input.value) || 0;
+const val = parseFloat(input.dataset.value);
+total += qty * val;
+});
+
+const price = parseFloat(document.getElementById("price").value) || 0;
+
+let result = document.getElementById("result");
+
+if(!price){
+result.innerText = "Enter pack price";
+return;
+}
+
+let ratio = total / price;
+
+if(ratio > 1.15){
+result.innerText = "GOOD DEAL 🔥";
+result.style.color="lime";
+}
+else if(ratio > .95){
+result.innerText = "FAIR";
+result.style.color="gold";
+}
+else{
+result.innerText = "SKIP";
+result.style.color="red";
+}
+
+}
+
+document.querySelectorAll("input").forEach(i=>{
+i.addEventListener("input",update);
 });
 
 </script>
