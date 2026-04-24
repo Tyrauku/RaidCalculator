@@ -14,10 +14,11 @@
     <header>
       <h1>Tyrauku's <span class="gold">Raid Offer Calculator</span></h1>
       <div class="subtitle">Enter quantities, compare the pack price, and instantly see if it beats your target values.</div>
-      <div class="headerLinks">
-        <a href="https://www.youtube.com/@TyRaids" target="_blank" rel="noopener">YouTube</a>
-        <a href="https://discord.gg/tgmgTc7YpP" target="_blank" rel="noopener">Discord</a>
-      </div>
+      <div class="links">
+        <a href="https://www.youtube.com/@TyRaids" target="_blank" class="youtube">YouTube</a>
+        <a href="https://discord.gg/tgmgTc7YpP" target="_blank" class="discord">Discord</a>
+        <a href="https://form.jotform.com/220255898373061" target="_blank" style="color:#35d07f; font-weight:bold;">Takeovers</a>
+</div>
     </header>
     <div class="top"><div class="panel"><div class="controls"><div><label>Pack Price</label><input id="price" type="number" min="0" step="0.01" placeholder="9.99"></div><div><label>Search Items</label><input id="search" type="text" placeholder="Ancient, energy, chickens..."></div><button id="clearQty" type="button">Clear Qty</button><button id="clearAll" type="button">Reset All</button></div><div class="summary"><div class="metric"><span>Pack Price</span><b id="mPrice">$0.00</b></div><div class="metric"><span>Added Value</span><b id="mValue">$0.00</b></div><div class="metric"><span>Difference</span><b id="mDiff">$0.00</b></div><div class="metric"><span>Value Ratio</span><b id="mRatio">0.00x</b></div></div><div id="status" class="status neutral">Add quantities to evaluate a pack.</div></div></div>
     <div id="tabs" class="tabs"></div><main id="items" class="grid"></main><div class="footer">Easy Adding Number = your chosen decision price. Pack is good when Added Value is higher than Pack Price.</div>
