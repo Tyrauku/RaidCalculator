@@ -21,7 +21,7 @@
     .takeover{color:#35d07f}
     .top{position:sticky;top:0;z-index:10;background:linear-gradient(180deg,rgba(7,10,18,.98),rgba(7,10,18,.88));backdrop-filter:blur(12px);padding:12px 0;margin-bottom:14px;border-bottom:1px solid var(--line)}
     .panel{background:linear-gradient(180deg,rgba(28,39,64,.95),rgba(21,29,46,.95));border:1px solid var(--line);border-radius:18px;box-shadow:var(--shadow)}
-    .controls{display:grid;grid-template-columns:180px 1fr auto auto auto;gap:10px;padding:12px;align-items:end}
+    .controls{display:grid;grid-template-columns:180px 1fr auto auto auto auto;gap:10px;padding:12px;align-items:end}
     label{display:block;color:var(--muted);font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;margin:0 0 5px}
     input{width:100%;border:1px solid var(--line);background:#0b1120;color:var(--text);border-radius:12px;padding:11px 12px;font-size:15px;outline:none}
     input:focus{border-color:var(--gold);box-shadow:0 0 0 3px rgba(245,200,75,.12)}
@@ -44,6 +44,10 @@
     .modeGroup{display:flex;gap:8px;flex-wrap:wrap}
     .mode{padding:10px 13px;border-radius:999px;background:rgba(255,255,255,.06);border:1px solid var(--line);cursor:pointer;font-weight:800;color:var(--muted)}
     .mode.active{background:linear-gradient(180deg,rgba(245,200,75,.28),rgba(245,200,75,.12));color:var(--text);border-color:rgba(245,200,75,.55)}
+    .currencyWrap{display:flex;gap:8px;align-items:end;flex-wrap:wrap}
+    .currencyGroup{display:flex;gap:8px;flex-wrap:wrap}
+    .currency{padding:10px 13px;border-radius:999px;background:rgba(255,255,255,.06);border:1px solid var(--line);cursor:pointer;font-weight:800;color:var(--muted)}
+    .currency.active{background:linear-gradient(180deg,rgba(119,167,255,.28),rgba(119,167,255,.12));color:var(--text);border-color:rgba(119,167,255,.55)}
     .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:10px}
     .item{background:linear-gradient(180deg,rgba(28,39,64,.92),rgba(18,25,40,.92));border:1px solid var(--line);border-radius:16px;padding:11px;position:relative;overflow:hidden}
     .item::before{content:"";position:absolute;inset:0 auto 0 0;width:3px;background:linear-gradient(var(--gold),transparent);opacity:.7}
@@ -60,7 +64,7 @@
     .total{text-align:right;font-weight:900;color:#dce8ff}
     .note{font-size:11px;color:var(--muted);margin-top:7px;line-height:1.25}
     .footer{color:var(--muted);font-size:12px;text-align:center;padding:24px 0}
-    @media(max-width:780px){.controls{grid-template-columns:1fr 1fr}.modeWrap{grid-column:1 / -1}.summary{grid-template-columns:1fr 1fr}.top{position:static}.grid{grid-template-columns:1fr 1fr}.wrap{padding:12px}}
+    @media(max-width:780px){.controls{grid-template-columns:1fr 1fr}.modeWrap,.currencyWrap{grid-column:1 / -1}.summary{grid-template-columns:1fr 1fr}.top{position:static}.grid{grid-template-columns:1fr 1fr}.wrap{padding:12px}}
     @media(max-width:520px){.grid{grid-template-columns:1fr}.controls{grid-template-columns:1fr}.summary{grid-template-columns:1fr 1fr}}
   </style>
 </head>
@@ -91,6 +95,18 @@
               </div>
             </div>
           </div>
+          <div class="currencyWrap">
+            <div>
+              <label>Currency</label>
+              <div class="currencyGroup">
+                <button type="button" class="currency active" data-currency="usd">USD</button>
+                <button type="button" class="currency" data-currency="eur">EUR</button>
+                <button type="button" class="currency" data-currency="gbp">GBP</button>
+                <button type="button" class="currency" data-currency="cad">CAD</button>
+                <button type="button" class="currency" data-currency="aud">AUD</button>
+              </div>
+            </div>
+          </div>
           <button id="clearQty" type="button">Clear Qty</button>
           <button id="clearAll" type="button">Reset All</button>
         </div>
@@ -106,7 +122,7 @@
 
     <div id="tabs" class="tabs"></div>
     <main id="items" class="grid"></main>
-    <div class="footer">Strict = 80% Ideal / 20% OK. Mid = 60% Ideal / 40% OK. Decent = 40% Ideal / 60% OK.</div>
+    <div class="footer">Strict = 80% Ideal / 20% OK. Mid = 60% Ideal / 40% OK. Decent = 40% Ideal / 60% OK. Currency rates are editable in the code.</div>
   </div>
 
 <script>
@@ -138,18 +154,27 @@ const ICONS={
   'Tag Arena Refills':'./tagrefill.jpg'
 };
 
+const CURRENCIES={
+  usd:{label:'USD',symbol:'$',rate:1},
+  eur:{label:'EUR',symbol:'€',rate:.92},
+  gbp:{label:'GBP',symbol:'£',rate:.79},
+  cad:{label:'CAD',symbol:'CA$',rate:1.36},
+  aud:{label:'AUD',symbol:'A$',rate:1.52}
+};
+
 const DATA=[
-{section:'Regular Purchases',item:'Ancient Shard',ideal:.90,realistic:1.15},{section:'Regular Purchases',item:'Void Shard',ideal:2,realistic:2.5},{section:'Regular Purchases',item:'Sacred Shard',ideal:7,realistic:15},{section:'Regular Purchases',item:'Primal Shard',ideal:4,realistic:5},{section:'Regular Purchases',item:'Energy',ideal:.00333,realistic:.005},{section:'Regular Purchases',item:'Energy Refills',ideal:.43,realistic:.65},{section:'Regular Purchases',item:'Gems',ideal:.01075,realistic:.016},{section:'Regular Purchases',item:'Legendary Books',ideal:3.5,realistic:5},{section:'Regular Purchases',item:'Mythical Books',ideal:5,realistic:8},{section:'Regular Purchases',item:'Mortal Soulstone',ideal:.5,realistic:.8},{section:'Regular Purchases',item:'Immortal Soulstone',ideal:4,realistic:5},{section:'Regular Purchases',item:'Eternal Soulstone',ideal:20,realistic:25},{section:'Regular Purchases',item:'2* Basalt',ideal:.41,realistic:.41},{section:'Regular Purchases',item:'3* Basalt',ideal:1.25,realistic:1.25},{section:'Regular Purchases',item:'4* Basalt',ideal:5,realistic:5},{section:'Regular Purchases',item:'Starstone',ideal:.0055,realistic:.0066},
-{section:'As Needed',item:'Epic Books',ideal:2,realistic:3},{section:'As Needed',item:'Rare Books',ideal:null,realistic:null},{section:'As Needed',item:'Brews',ideal:.0093,realistic:.0093,note:'Based on pricing of barrels'},{section:'As Needed',item:'Barrel',ideal:1,realistic:1,note:'Higher value on rank 6 champs. About 200 energy worth of XP from 1-60.'},{section:'As Needed',item:'XP Boost',ideal:null,realistic:null,note:'Shop has them for 140 gems; usually not worth factoring.'},{section:'As Needed',item:'4* Chickens',ideal:1,realistic:1.25},{section:'As Needed',item:'5* Chickens',ideal:5,realistic:6},{section:'As Needed',item:'Feast',ideal:25,realistic:30,note:'Higher value when used on low rank champs.'},
+{section:'Regular Purchases',item:'Ancient Shard',ideal:.90,realistic:1.15},{section:'Regular Purchases',item:'Void Shard',ideal:2,realistic:2.5},{section:'Regular Purchases',item:'Sacred Shard',ideal:7,realistic:15},{section:'Regular Purchases',item:'Primal Shard',ideal:4,realistic:5},{section:'Regular Purchases',item:'Energy',ideal:.00333,realistic:.005},{section:'Regular Purchases',item:'Energy Refills',ideal:.43,realistic:.65},{section:'Regular Purchases',item:'Gems',ideal:.01075,realistic:.016},{section:'Regular Purchases',item:'Legendary Books',ideal:3.5,realistic:5},{section:'Regular Purchases',item:'Mythical Books',ideal:5,realistic:8},{section:'Regular Purchases',item:'Mortal Soulstone',ideal:.5,realistic:.8},{section:'Regular Purchases',item:'Immortal Soulstone',ideal:4,realistic:5},{section:'Regular Purchases',item:'Eternal Soulstone',ideal:20,realistic:25},{section:'Regular Purchases',item:'2* Basalt',ideal:null,realistic:.41},{section:'Regular Purchases',item:'3* Basalt',ideal:null,realistic:1.25},{section:'Regular Purchases',item:'4* Basalt',ideal:null,realistic:5},{section:'Regular Purchases',item:'Starstone',ideal:.0055,realistic:.0066},
+{section:'As Needed',item:'Epic Books',ideal:2,realistic:3},{section:'As Needed',item:'Rare Books',ideal:null,realistic:null},{section:'As Needed',item:'Brews',ideal:.0093,realistic:null,note:'Based on pricing of barrels'},{section:'As Needed',item:'Barrel',ideal:1,realistic:null,note:'Higher value on rank 6 champs. About 200 energy worth of XP from 1-60.'},{section:'As Needed',item:'XP Boost',ideal:null,realistic:null,note:'Shop has them for 140 gems; usually not worth factoring.'},{section:'As Needed',item:'4* Chickens',ideal:1,realistic:1.25},{section:'As Needed',item:'5* Chickens',ideal:5,realistic:6},{section:'As Needed',item:'Feast',ideal:25,realistic:30,note:'Higher value when used on low rank champs.'},
 {section:'Included in Packs',item:'Clan Boss Key',ideal:null,realistic:null},{section:'Included in Packs',item:'Arena Refills',ideal:.43,realistic:.65},{section:'Included in Packs',item:'2* Chickens',ideal:null,realistic:null},{section:'Included in Packs',item:'3* Chickens',ideal:null,realistic:null},{section:'Included in Packs',item:'Tag Arena Refills',ideal:.43,realistic:.65},{section:'Included in Packs',item:'5* Epic Chaos Ore',ideal:null,realistic:null},{section:'Included in Packs',item:'6* Epic Chaos Ore',ideal:null,realistic:null},{section:'Included in Packs',item:'5* Leg Chaos Ore',ideal:null,realistic:null},{section:'Included in Packs',item:'6* Leg Chaos Ore',ideal:null,realistic:null},{section:'Included in Packs',item:'Multi-battles',ideal:null,realistic:null},{section:'Included in Packs',item:'Plarium Play Points',ideal:null,realistic:null},{section:'Included in Packs',item:'Silver',ideal:.000001,realistic:.000001},
 {section:'Never Purchased',item:'Lesser Artifact Oil',ideal:null,realistic:null},{section:'Never Purchased',item:'Greater Artifact Oil',ideal:null,realistic:null},{section:'Never Purchased',item:'Superior Artifact Oil',ideal:null,realistic:null},{section:'Never Purchased',item:'Lesser Potions',ideal:null,realistic:null},{section:'Never Purchased',item:'Greater Potions',ideal:null,realistic:null},{section:'Never Purchased',item:'Superior Potions',ideal:null,realistic:null}
 ];
 
 const $=id=>document.getElementById(id);
 const saved=JSON.parse(localStorage.getItem('raidPackValueState')||'{}');
-const state={qty:{},price:'',section:'All',mode:'mid',...saved};
+const state={qty:{},price:'',section:'All',mode:'mid',currency:'usd',...saved};
 let currentSection=state.section||'All';
 let currentMode=state.mode||'mid';
+let currentCurrency=state.currency||'usd';
 
 function easyValue(x){
   if(x.ideal==null || x.realistic==null)return null;
@@ -162,14 +187,17 @@ function easyValue(x){
 
   return (ideal*.6)+(realistic*.4);
 }
-function money(n){
+function formatMoney(n,convertFromUsd=true){
   if(n==null||Number.isNaN(Number(n)))return'Not Factoring';
-  const num=Number(n);
-  return'$'+num.toLocaleString(undefined,{minimumFractionDigits:Math.abs(num)<.01&&num!==0?4:2,maximumFractionDigits:Math.abs(num)<.01&&num!==0?5:2});
+  const currency=CURRENCIES[currentCurrency]||CURRENCIES.usd;
+  const num=convertFromUsd?Number(n)*currency.rate:Number(n);
+  return currency.symbol+num.toLocaleString(undefined,{minimumFractionDigits:Math.abs(num)<.01&&num!==0?4:2,maximumFractionDigits:Math.abs(num)<.01&&num!==0?5:2});
 }
+function money(n){return formatMoney(n,true);}
+function localMoney(n){return formatMoney(n,false);}
 function safe(s){return String(s).replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;');}
 function idOf(x){return x.section+'|'+x.item}
-function save(){state.price=$('price').value;state.section=currentSection;state.mode=currentMode;localStorage.setItem('raidPackValueState',JSON.stringify(state));}
+function save(){state.price=$('price').value;state.section=currentSection;state.mode=currentMode;state.currency=currentCurrency;localStorage.setItem('raidPackValueState',JSON.stringify(state));}
 
 function renderTabs(){
   const sections=['All',...new Set(DATA.map(x=>x.section))];
@@ -184,6 +212,18 @@ function renderModes(){
       currentMode=btn.dataset.mode;
       save();
       renderModes();
+      renderItems();
+    };
+  });
+}
+
+function renderCurrencies(){
+  document.querySelectorAll('.currency').forEach(btn=>{
+    btn.classList.toggle('active',btn.dataset.currency===currentCurrency);
+    btn.onclick=()=>{
+      currentCurrency=btn.dataset.currency;
+      save();
+      renderCurrencies();
       renderItems();
     };
   });
@@ -231,16 +271,18 @@ function onQtyInput(e){
 
 function updateSummary(){
   const price=Number($('price').value||0);
-  let value=0,used=0;
+  const currency=CURRENCIES[currentCurrency]||CURRENCIES.usd;
+  let valueUsd=0,used=0;
   DATA.forEach(x=>{
     const easy=easyValue(x);
     const qty=Number(state.qty[idOf(x)]||0);
-    if(easy!=null&&qty>0){value+=qty*easy;used++;}
+    if(easy!=null&&qty>0){valueUsd+=qty*easy;used++;}
   });
+  const value=valueUsd*currency.rate;
   const diff=value-price,ratio=price?value/price:0;
-  $('mPrice').textContent=money(price);
-  $('mValue').textContent=money(value);
-  $('mDiff').textContent=money(diff);
+  $('mPrice').textContent=localMoney(price);
+  $('mValue').textContent=localMoney(value);
+  $('mDiff').textContent=localMoney(diff);
   $('mRatio').textContent=price?ratio.toFixed(2)+'x':'0.00x';
   const st=$('status');
   st.className='status neutral';
@@ -257,6 +299,7 @@ $('search').addEventListener('input',renderItems);
 $('clearQty').addEventListener('click',()=>{state.qty={};save();renderItems();});
 $('clearAll').addEventListener('click',()=>{state.qty={};state.price='';$('price').value='';save();renderItems();});
 renderModes();
+renderCurrencies();
 renderTabs();
 renderItems();
 </script>
