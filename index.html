@@ -290,11 +290,18 @@ function updateSummary(){
   $('mRatio').textContent=price?ratio.toFixed(2)+'x':'0.00x';
   const st=$('status');
   st.className='status neutral';
-  if(!used)st.textContent='Add quantities to evaluate a pack.';
-  else if(!price)st.textContent='Now enter the pack price.';
-  else if(ratio>=1.15){st.className='status good';st.textContent='GOOD DEAL — value is comfortably above the pack price.'}
-  else if(ratio>=.95){st.className='status fair';st.textContent='FAIR / CLOSE — roughly around your target value.'}
-  else{st.className='status bad';st.textContent='SKIP — based on your values, this is below target.'}
+  if(ratio>=1){
+  st.className='status good';
+  st.textContent='GOOD DEAL — meets or exceeds your value target.'
+}
+else if(ratio>=0.8){
+  st.className='status fair';
+  st.textContent='FAIR — slightly below your target value.'
+}
+else{
+  st.className='status bad';
+  st.textContent='SKIP — well below your target value.'
+}
 }
 
 $('price').value=state.price||'';
