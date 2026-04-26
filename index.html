@@ -188,6 +188,15 @@ function easyValue(x){
 
   return (ideal * 0.5) + (realistic * 0.5);
 }
+function formatMoney(n,convertFromUsd){
+  if(n==null||Number.isNaN(Number(n)))return'Not Factoring';
+  const currency=CURRENCIES[currentCurrency]||CURRENCIES.usd;
+  const raw=Number(n);
+  const num=convertFromUsd ? raw*currency.rate : raw;
+  const abs=Math.abs(num);
+  const decimals=abs<.01&&num!==0?5:2;
+  return currency.symbol+num.toLocaleString(undefined,{minimumFractionDigits:abs<.01&&num!==0?4:2,maximumFractionDigits:decimals});
+}
 function money(n){return formatMoney(n,true);}
 function localMoney(n){return formatMoney(n,false);}
 function safe(s){return String(s).replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;');}
@@ -242,7 +251,7 @@ function renderItems(){
         <div class="pill">${easy==null?'Skip':money(easy)}</div>
       </div>
       <div class="prices"><span>Ideal <b>${money(x.ideal)}</b></span><span>OK <b>${money(x.realistic)}</b></span></div>
-      <div class="qtyline"><input type="text" inputmode="numeric" pattern="[0-9]*" autocomplete="off" placeholder="Qty" value="${safe(qty)}" data-id="${safe(id)}" data-easy="${easy??''}" ${easy==null?'disabled':''}><div class="total" data-total-for="${safe(id)}">${total?money(total):'$0.00'}</div></div>
+      <div class="qtyline"><input type="text" inputmode="numeric" pattern="[0-9]*" autocomplete="off" placeholder="Qty" value="${safe(qty)}" data-id="${safe(id)}" data-easy="${easy??''}" ${easy==null?'disabled':''}><div class="total" data-total-for="${safe(id)}">${total?money(total):localMoney(0)}</div></div>
       ${x.note?`<div class="note">${safe(x.note)}</div>`:''}
     </article>`
   }).join('');
@@ -259,7 +268,7 @@ function onQtyInput(e){
   if(cleaned==='')delete state.qty[id];else state.qty[id]=cleaned;
   const lineTotal=cleaned===''?0:Number(cleaned)*easy;
   const totalEl=document.querySelector(`[data-total-for="${CSS.escape(id)}"]`);
-  if(totalEl)totalEl.textContent=lineTotal?money(lineTotal):'$0.00';
+  if(totalEl)totalEl.textContent=lineTotal?money(lineTotal):localMoney(0);
   updateSummary();
   save();
 }
