@@ -122,7 +122,7 @@
 
     <div id="tabs" class="tabs"></div>
     <main id="items" class="grid"></main>
-    <div class="footer">Strict = 80% Ideal / 20% OK. Mid = 60% Ideal / 40% OK. Decent = 40% Ideal / 60% OK. Currency rates are editable in the code.</div>
+    <div class="footer">Strict = 80% Ideal / 20% OK  Mid = 50% Ideal / 50% OK  Decent = 20% Ideal / 80% OK</div>
   </div>
 
 <script>
@@ -182,16 +182,11 @@ function easyValue(x){
   const ideal=Number(x.ideal);
   const realistic=Number(x.realistic);
 
-  if(currentMode==='strict')return (ideal*.8)+(realistic*.2);
-  if(currentMode==='decent')return (ideal*.4)+(realistic*.6);
+  if(currentMode==='strict') return (ideal * 0.8) + (realistic * 0.2);
+  if(currentMode==='mid')    return (ideal * 0.5) + (realistic * 0.5);
+  if(currentMode==='decent') return (ideal * 0.2) + (realistic * 0.8);
 
-  return (ideal*.6)+(realistic*.4);
-}
-function formatMoney(n,convertFromUsd=true){
-  if(n==null||Number.isNaN(Number(n)))return'Not Factoring';
-  const currency=CURRENCIES[currentCurrency]||CURRENCIES.usd;
-  const num=convertFromUsd?Number(n)*currency.rate:Number(n);
-  return currency.symbol+num.toLocaleString(undefined,{minimumFractionDigits:Math.abs(num)<.01&&num!==0?4:2,maximumFractionDigits:Math.abs(num)<.01&&num!==0?5:2});
+  return (ideal * 0.5) + (realistic * 0.5);
 }
 function money(n){return formatMoney(n,true);}
 function localMoney(n){return formatMoney(n,false);}
