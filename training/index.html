@@ -1,0 +1,357 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Champion Training Calculator | Tyrauku</title>
+<meta name="description" content="Plan 6-star food for Raid: Shadow Legends. How many champions you need, Champion Training points, XP, energy and time.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@600;700&family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    color-scheme: dark;
+    --bg: #0b0c0e;
+    --box: #14161a;
+    --box2: #1a1d22;
+    --line: #2c3038;
+    --ink: #ecedee;
+    --soft: #c5c8ce;
+    --muted: #979ca6;
+    --accent: #2fe6ee;
+    --gold: #e9b44c;
+    --display: "Chakra Petch", "Montserrat", "Segoe UI", sans-serif;
+    --cut: 14px;
+    --shape: polygon(0 0, calc(100% - var(--cut)) 0, 100% var(--cut), 100% 100%, var(--cut) 100%, 0 calc(100% - var(--cut)));
+  }
+  * { box-sizing: border-box; }
+  [hidden] { display: none !important; }
+  body { margin: 0; background: var(--bg); color: var(--ink); font: 15px/1.5 Montserrat, "Segoe UI", sans-serif; }
+  a { color: var(--accent); }
+  .wrap { max-width: 1120px; margin: 0 auto; padding: 28px 16px 48px; }
+
+  header { border-bottom: 2px solid var(--accent); padding-bottom: 18px; margin-bottom: 26px; display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 12px 24px; }
+  .by { font-family: var(--display); color: var(--accent); font-size: 15px; letter-spacing: .02em; }
+  h1 { font-family: var(--display); font-weight: 700; font-size: clamp(30px, 5vw, 46px); line-height: 1.05; margin: 2px 0 6px; }
+  .lede { color: var(--soft); margin: 0; max-width: 560px; }
+  nav { display: flex; gap: 18px; flex-wrap: wrap; font-weight: 600; }
+  nav a { text-decoration: none; }
+  nav a:hover { text-decoration: underline; }
+
+  .layout { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr); gap: 22px; align-items: start; }
+  .card { background: var(--line); padding: 1px; clip-path: var(--shape); }
+  .card > .in { background: var(--box); clip-path: var(--shape); padding: 18px 20px 20px; }
+  .stack > * + * { margin-top: 18px; }
+  h2 { font-family: var(--display); font-size: 21px; margin: 0 0 12px; display: flex; align-items: center; gap: 10px; }
+  h2 .n { width: 26px; height: 26px; flex: none; display: grid; place-items: center; background: var(--accent); color: #041012; font-size: 15px; clip-path: polygon(0 0, 100% 0, 100% 68%, 68% 100%, 0 100%); }
+
+  .choice { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 14px; }
+  .choice label { position: relative; display: block; cursor: pointer; }
+  .choice input { position: absolute; opacity: 0; }
+  .choice span { display: block; text-align: center; padding: 10px 8px; border: 1px solid var(--line); background: var(--box2); color: var(--soft); font-weight: 600; clip-path: polygon(0 0, calc(100% - 9px) 0, 100% 9px, 100% 100%, 0 100%); }
+  .choice input:checked + span { border-color: var(--accent); color: var(--ink); background: #0f2a2c; }
+  .choice input:focus-visible + span { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+  .sentence { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 10px; font-size: 16px; color: var(--soft); }
+  input[type=number], select { font: inherit; color: var(--ink); background: var(--bg); border: 1px solid var(--line); padding: 8px 10px; border-radius: 0; }
+  input[type=number]:focus, select:focus { outline: none; border-color: var(--accent); }
+  .sentence input[type=number] { width: 84px; }
+  .hint { color: var(--muted); font-size: 13px; margin: 10px 0 0; }
+
+  .check { display: flex; gap: 10px; align-items: flex-start; margin-top: 12px; cursor: pointer; }
+  .check input { width: 18px; height: 18px; margin: 2px 0 0; accent-color: var(--accent); flex: none; }
+  .check b { display: block; font-weight: 600; }
+  .check small { display: block; color: var(--muted); font-size: 13px; }
+  .foodlevels { display: flex; flex-wrap: wrap; gap: 10px 16px; margin: 10px 0 0 28px; }
+  .foodlevels label { color: var(--soft); font-size: 14px; display: flex; align-items: center; gap: 6px; }
+  .foodlevels input { width: 64px; padding: 6px 8px; }
+
+  .fields { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .fields label { display: block; color: var(--soft); font-size: 14px; }
+  .fields input { width: 100%; margin-top: 4px; }
+  .reset { background: none; border: 0; color: var(--accent); font: inherit; font-size: 13px; padding: 0; margin-top: 10px; cursor: pointer; text-decoration: underline; }
+
+  .results { position: sticky; top: 16px; }
+  .big { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1px; background: var(--line); border: 1px solid var(--line); margin-bottom: 16px; }
+  .big div { background: var(--box2); padding: 12px 14px; }
+  .big span { display: block; color: var(--muted); font-size: 13px; }
+  .big b { display: block; font-family: var(--display); font-size: clamp(24px, 3.4vw, 32px); line-height: 1.15; }
+  .big .main b { color: var(--accent); }
+  .summary { color: var(--soft); margin: 0 0 14px; }
+  .summary strong { color: var(--ink); }
+
+  table { width: 100%; border-collapse: collapse; font-size: 14px; }
+  th, td { text-align: left; padding: 9px 8px; border-bottom: 1px solid var(--line); vertical-align: top; }
+  th { color: var(--muted); font-weight: 600; font-size: 13px; }
+  td.num, th.num { text-align: right; white-space: nowrap; }
+  td .r { font-family: var(--display); font-weight: 700; color: var(--gold); }
+  td small { display: block; color: var(--muted); }
+  tfoot td { font-weight: 700; border-bottom: 0; }
+  .notes { color: var(--muted); font-size: 13px; margin: 14px 0 0; padding-left: 18px; }
+  .notes li + li { margin-top: 4px; }
+  .warn { border-left: 3px solid var(--gold); background: var(--box2); padding: 10px 12px; color: var(--soft); margin-bottom: 14px; }
+  footer { color: var(--muted); font-size: 13px; margin-top: 28px; }
+
+  @media (max-width: 860px) {
+    .layout { grid-template-columns: 1fr; }
+    .results { position: static; }
+  }
+  @media (max-width: 420px) {
+    .fields { grid-template-columns: 1fr; }
+    .big b { font-size: 24px; }
+    th:nth-child(3), td:nth-child(3) { display: none; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div>
+      <div class="by">Tyrauku</div>
+      <h1>Champion Training Calculator</h1>
+      <p class="lede">How much food a 6-star takes, the Champion Training points you get for it, and the XP, energy and time it costs.</p>
+    </div>
+    <nav>
+      <a href="../">Offer calculator</a>
+      <a href="https://www.youtube.com/@TyRaids" target="_blank" rel="noopener">YouTube</a>
+      <a href="https://discord.gg/bfXwxhRD4A" target="_blank" rel="noopener">Discord</a>
+    </nav>
+  </header>
+
+  <div class="layout">
+    <div class="stack">
+      <section class="card"><div class="in">
+        <h2><span class="n">1</span>What are you building?</h2>
+        <div class="choice" role="radiogroup" aria-label="Plan by">
+          <label><input type="radio" name="mode" value="want" checked><span>I know what I want</span></label>
+          <label><input type="radio" name="mode" value="have"><span>I know what I have</span></label>
+        </div>
+        <div class="sentence" id="sentence">
+          <span id="s1">I want</span>
+          <input type="number" id="count" min="0" step="1" value="1" aria-label="How many">
+          <select id="first" aria-label="Rank"></select>
+          <span id="s2">champions, made from</span>
+          <select id="second" aria-label="Rank"></select>
+          <span id="s3">food.</span>
+        </div>
+      </div></section>
+
+      <section class="card"><div class="in">
+        <h2><span class="n">2</span>Event points</h2>
+        <label class="check">
+          <input type="checkbox" id="levelFood" checked>
+          <span><b>Level food before feeding it</b>
+          <small>Food stops at the last level that still earns points as cheaply as maxing a champion does. Change the levels if you want.</small></span>
+        </label>
+        <div class="foodlevels" id="foodLevels"></div>
+        <label class="check">
+          <input type="checkbox" id="maxFinished">
+          <span><b>Also max the finished champions</b>
+          <small>Adds the levels on the champions you end up with.</small></span>
+        </label>
+      </div></section>
+
+      <section class="card"><div class="in">
+        <h2><span class="n">3</span>How you level them</h2>
+        <div class="choice" role="radiogroup" aria-label="Levelling method">
+          <label><input type="radio" name="method" value="campaign" checked><span>Campaign</span></label>
+          <label><input type="radio" name="method" value="brew"><span>Brews</span></label>
+        </div>
+        <div class="fields" id="campaignFields">
+          <label>XP per champion per run<input type="number" id="xpPerChamp" min="0" step="1"></label>
+          <label>Champions levelling per run<input type="number" id="champsPerRun" min="1" max="4" step="1"></label>
+          <label>Energy per run<input type="number" id="energyPerRun" min="0" step="1"></label>
+          <label>Seconds per run<input type="number" id="secondsPerRun" min="0" step="1"></label>
+        </div>
+        <div class="fields" id="brewFields" hidden>
+          <label>XP per brew<input type="number" id="xpPerBrew" min="0" step="1"></label>
+        </div>
+        <p class="hint" id="methodNote"></p>
+        <button type="button" class="reset" id="resetFarm">Put the starting numbers back</button>
+      </div></section>
+    </div>
+
+    <section class="card results" aria-live="polite"><div class="in">
+      <h2>Your plan</h2>
+      <div id="warn"></div>
+      <div class="big">
+        <div class="main"><span>Champion Training points</span><b id="bPoints">0</b></div>
+        <div><span id="lNeed">Champions needed</span><b id="bNeed">0</b></div>
+        <div><span id="lCost">Energy</span><b id="bCost">0</b></div>
+        <div><span id="lTime">Time farming</span><b id="bTime">0</b></div>
+      </div>
+      <p class="summary" id="summary"></p>
+      <table>
+        <thead><tr><th>Rank</th><th>What to do</th><th class="num">XP</th><th class="num">Points</th></tr></thead>
+        <tbody id="steps"></tbody>
+        <tfoot><tr><td colspan="2">Total</td><td class="num" id="tXp">0</td><td class="num" id="tPoints">0</td></tr></tfoot>
+      </table>
+      <ul class="notes">
+        <li>A rank-up takes one max-level champion plus as many food champions as its rank (a 3★ takes three 3★ food).</li>
+        <li>Points use the Champion Training values: 1 / 1 / 2 / 3 / 6 / 8 per level for 1★ to 6★, and 5 / 15 / 50 / 100 / 300 for ranking up to 2★ to 6★. Check the event's rules screen in case they change.</li>
+        <li>Runs and brews are rounded up. A little XP is lost when a champion hits max level partway through a run.</li>
+      </ul>
+    </div></section>
+  </div>
+
+  <footer>Made by Tyrauku. Numbers are worked out from the game's XP table; nothing you enter leaves your browser.</footer>
+</div>
+
+<script src="data.js"></script>
+<script src="calc.js"></script>
+<script>
+(function () {
+  const D = window.TRAINING_DATA, C = window.TrainingCalc;
+  const $ = (id) => document.getElementById(id);
+  const fmt = (n) => (n == null ? "–" : Math.round(n).toLocaleString("en-US"));
+  const star = (r) => r + "★";
+  const FARM_KEYS = ["xpPerChamp", "champsPerRun", "energyPerRun", "secondsPerRun", "xpPerBrew"];
+  const STORE = "raidTrainingCalc.v1";
+
+  const defaults = {
+    mode: "want", count: 1, start: 3, target: 6, levelFood: true, maxFinished: false, method: "campaign",
+    foodLevels: {},
+    xpPerChamp: D.farming.campaign.xpPerChamp, champsPerRun: D.farming.campaign.champsPerRun,
+    energyPerRun: D.farming.campaign.energyPerRun, secondsPerRun: D.farming.campaign.secondsPerRun,
+    xpPerBrew: D.farming.brew.xpPerBrew,
+  };
+  let state = Object.assign({}, defaults);
+  try { Object.assign(state, JSON.parse(localStorage.getItem(STORE) || "{}")); } catch (e) {}
+  const save = () => { try { localStorage.setItem(STORE, JSON.stringify(state)); } catch (e) {} };
+
+  function options(sel, from, to, value) {
+    sel.innerHTML = "";
+    for (let r = from; r <= to; r++) sel.add(new Option(star(r), r, false, r === value));
+  }
+
+  // In "want" mode the first dropdown is the target rank and the second the food rank.
+  // In "have" mode it is the other way round, so the sentence reads naturally.
+  function drawSentence() {
+    const want = state.mode === "want";
+    $("s1").textContent = want ? "I want" : "I have";
+    $("s2").textContent = want ? "champions, made from" : "champions to rank up to";
+    $("s3").textContent = want ? "champions." : "";
+    if (want) { options($("first"), 2, 6, state.target); options($("second"), 1, state.target - 1, state.start); }
+    else { options($("first"), 1, 5, state.start); options($("second"), state.start + 1, 6, state.target); }
+  }
+
+  function drawFoodLevels() {
+    const box = $("foodLevels");
+    box.innerHTML = "";
+    box.hidden = !state.levelFood;
+    for (let r = state.start; r < state.target; r++) {
+      const auto = C.efficientFoodLevel(D, r);
+      const val = state.foodLevels[r] || auto;
+      const label = document.createElement("label");
+      label.innerHTML = `${star(r)} food to level <input type="number" min="1" max="${C.maxLevel(r)}" step="1" value="${val}" data-rank="${r}">`;
+      box.appendChild(label);
+    }
+    box.querySelectorAll("input").forEach((inp) => inp.addEventListener("input", () => {
+      const r = Number(inp.dataset.rank), v = Math.floor(Number(inp.value));
+      if (v >= 1 && v <= C.maxLevel(r)) state.foodLevels[r] = v; else delete state.foodLevels[r];
+      update();
+    }));
+  }
+
+  function drawMethod() {
+    const campaign = state.method === "campaign";
+    $("campaignFields").hidden = !campaign;
+    $("brewFields").hidden = campaign;
+    $("methodNote").textContent = campaign ? D.farming.campaign.note : D.farming.brew.note;
+    FARM_KEYS.forEach((k) => { $(k).value = state[k]; });
+  }
+
+  function timeText(sec) {
+    if (sec == null) return "–";
+    const m = Math.round(sec / 60);
+    if (m < 60) return m + " min";
+    return Math.floor(m / 60) + " h " + (m % 60) + " min";
+  }
+
+  function update() {
+    save();
+    const p = C.plan(D, state);
+    const t = p.totals;
+    const warn = $("warn");
+    warn.innerHTML = "";
+
+    if (state.mode === "have" && p.builds === 0) {
+      let best = null;
+      for (let r = state.target - 1; r > state.start; r--) {
+        const n = Math.floor(state.count / C.championsPer(state.start, r));
+        if (n > 0) { best = { r, n }; break; }
+      }
+      warn.innerHTML = `<div class="warn">One ${star(state.target)} takes ${fmt(p.per)} ${star(state.start)} champions.` +
+        (best ? ` ${fmt(state.count)} is enough for ${fmt(best.n)} ${star(best.r)} instead.` : "") + `</div>`;
+    }
+
+    $("bPoints").textContent = fmt(t.points);
+    $("lNeed").textContent = state.mode === "have" ? star(state.target) + " you can make" : star(state.start) + " champions needed";
+    $("bNeed").textContent = state.mode === "have" ? fmt(p.builds) : fmt(p.needed);
+    if (state.method === "brew") {
+      $("lCost").textContent = "Brews"; $("bCost").textContent = fmt(t.brews);
+      $("lTime").textContent = "XP"; $("bTime").textContent = fmt(t.xp);
+    } else {
+      $("lCost").textContent = "Energy"; $("bCost").textContent = fmt(t.energy);
+      $("lTime").textContent = "Time farming"; $("bTime").textContent = timeText(t.seconds);
+    }
+
+    const each = `${fmt(p.per)} ${star(state.start)} go into each ${star(state.target)}`;
+    let summary = state.mode === "have"
+      ? `Your ${fmt(state.count)} ${star(state.start)} make <strong>${fmt(p.builds)} ${star(state.target)}</strong>` + (p.leftover ? `, with ${fmt(p.leftover)} left over` : "") + `. ${each}.`
+      : `For ${fmt(state.count)} ${star(state.target)} you need <strong>${fmt(p.needed)} ${star(state.start)}</strong>` + (state.count > 1 ? ` (${fmt(p.per)} each)` : "") + ".";
+    if (state.method === "campaign" && t.runs != null) summary += ` About ${fmt(t.runs)} runs.`;
+    $("summary").innerHTML = summary;
+
+    const rows = p.stages.map((s) => {
+      const food = s.food ? ` The other ${fmt(s.food)} are food` + (s.foodLevel > 1 ? `, levelled to ${s.foodLevel} first.` : ".") : "";
+      return `<tr><td><span class="r">${star(s.rank)}</span></td>
+        <td>Max out ${fmt(s.rankUps)} (level ${C.maxLevel(s.rank)}) and rank them up to ${star(s.rank + 1)}.${food}
+          <small>${fmt(s.levelPoints)} from levels, ${fmt(s.rankUpPoints)} from rank-ups${s.foodPoints ? ", " + fmt(s.foodPoints) + " from food" : ""}</small></td>
+        <td class="num">${fmt(s.xp)}</td><td class="num">${fmt(s.points)}</td></tr>`;
+    });
+    if (p.finish) {
+      rows.push(`<tr><td><span class="r">${star(p.finish.rank)}</span></td><td>Max the ${fmt(p.finish.champions)} finished champion${p.finish.champions === 1 ? "" : "s"} to level ${C.maxLevel(p.finish.rank)}.</td>
+        <td class="num">${fmt(p.finish.xp)}</td><td class="num">${fmt(p.finish.points)}</td></tr>`);
+    }
+    $("steps").innerHTML = rows.join("") || `<tr><td colspan="4">Nothing to rank up.</td></tr>`;
+    $("tXp").textContent = fmt(t.xp);
+    $("tPoints").textContent = fmt(t.points);
+  }
+
+  function readSentence() {
+    const a = Number($("first").value), b = Number($("second").value);
+    if (state.mode === "want") { state.target = a; state.start = Math.min(b, a - 1); }
+    else { state.start = a; state.target = Math.max(b, a + 1); }
+  }
+
+  document.querySelectorAll("input[name=mode]").forEach((r) => {
+    r.checked = r.value === state.mode;
+    r.addEventListener("change", () => {
+      const was = state.mode;
+      state.mode = r.value;
+      if (was === "want" && state.mode === "have") state.count = C.championsPer(state.start, state.target) * Math.max(1, state.count);
+      if (was === "have" && state.mode === "want") state.count = Math.max(1, Math.floor(state.count / C.championsPer(state.start, state.target)));
+      $("count").value = state.count;
+      drawSentence(); drawFoodLevels(); update();
+    });
+  });
+  document.querySelectorAll("input[name=method]").forEach((r) => {
+    r.checked = r.value === state.method;
+    r.addEventListener("change", () => { state.method = r.value; drawMethod(); update(); });
+  });
+  $("count").value = state.count;
+  $("count").addEventListener("input", () => { state.count = Math.max(0, Math.floor(Number($("count").value) || 0)); update(); });
+  ["first", "second"].forEach((id) => $(id).addEventListener("change", () => { readSentence(); drawSentence(); drawFoodLevels(); update(); }));
+  $("levelFood").checked = state.levelFood;
+  $("levelFood").addEventListener("change", () => { state.levelFood = $("levelFood").checked; drawFoodLevels(); update(); });
+  $("maxFinished").checked = state.maxFinished;
+  $("maxFinished").addEventListener("change", () => { state.maxFinished = $("maxFinished").checked; update(); });
+  FARM_KEYS.forEach((k) => $(k).addEventListener("input", () => { state[k] = Number($(k).value) || 0; update(); }));
+  $("resetFarm").addEventListener("click", () => { FARM_KEYS.forEach((k) => { state[k] = defaults[k]; }); drawMethod(); update(); });
+
+  drawSentence(); drawFoodLevels(); drawMethod(); update();
+})();
+</script>
+</body>
+</html>
