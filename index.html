@@ -1,319 +1,345 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Tyrauku's Raid Offer Calculator</title>
-  <style>
-    :root{--bg:#070a12;--bg2:#101827;--card:#151d2e;--text:#f7f2df;--muted:#aeb8cc;--line:rgba(255,255,255,.12);--gold:#f5c84b;--green:#35d07f;--red:#ff6262;--blue:#77a7ff;--shadow:0 18px 50px rgba(0,0,0,.35)}
-    *{box-sizing:border-box}
-    body{margin:0;font-family:Inter,system-ui,Segoe UI,Arial,sans-serif;background:radial-gradient(circle at top left,rgba(245,200,75,.18),transparent 34%),radial-gradient(circle at 85% 10%,rgba(119,167,255,.14),transparent 30%),linear-gradient(180deg,var(--bg),var(--bg2));color:var(--text);min-height:100vh}
-    .wrap{max-width:1280px;margin:auto;padding:18px}
-    header{text-align:center;margin-bottom:16px}
-    h1{margin:0;font-size:clamp(26px,4vw,46px);letter-spacing:-.04em;line-height:1}
-    .subtitle{color:var(--muted);margin-top:8px;font-size:14px}
-    .gold{color:var(--gold)}
-    .links{display:flex;justify-content:center;gap:18px;flex-wrap:wrap;margin-top:12px}
-    .link{text-decoration:none;font-weight:900;font-size:16px;transition:.2s}
-    .link:hover{opacity:.8;text-decoration:underline}
-    .youtube{color:#f5c84b}
-    .discord{color:#77a7ff}
-    .takeover{color:#35d07f}
-    .top{position:sticky;top:0;z-index:10;background:linear-gradient(180deg,rgba(7,10,18,.98),rgba(7,10,18,.88));backdrop-filter:blur(12px);padding:12px 0;margin-bottom:14px;border-bottom:1px solid var(--line)}
-    .panel{background:linear-gradient(180deg,rgba(28,39,64,.95),rgba(21,29,46,.95));border:1px solid var(--line);border-radius:18px;box-shadow:var(--shadow)}
-    .controls{display:grid;grid-template-columns:180px 1fr auto auto auto auto;gap:10px;padding:12px;align-items:end}
-    label{display:block;color:var(--muted);font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;margin:0 0 5px}
-    input{width:100%;border:1px solid var(--line);background:#0b1120;color:var(--text);border-radius:12px;padding:11px 12px;font-size:15px;outline:none}
-    input:focus{border-color:var(--gold);box-shadow:0 0 0 3px rgba(245,200,75,.12)}
-    button{border:1px solid var(--line);background:linear-gradient(180deg,#263552,#172239);color:var(--text);border-radius:12px;padding:11px 14px;font-weight:800;cursor:pointer;white-space:nowrap}
-    button:hover{border-color:var(--gold);transform:translateY(-1px)}
-    .summary{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;padding:0 12px 12px}
-    .metric{background:rgba(7,10,18,.42);border:1px solid var(--line);border-radius:14px;padding:12px}
-    .metric span{display:block;color:var(--muted);font-size:12px}
-    .metric b{display:block;font-size:clamp(22px,3vw,34px);letter-spacing:-.04em;margin-top:2px}
-    .status{margin:0 12px 12px;padding:11px;border-radius:14px;text-align:center;font-weight:900;border:1px solid var(--line)}
-    .good{background:rgba(53,208,127,.14);color:#9af3c1}
-    .fair{background:rgba(245,200,75,.13);color:#ffe08a}
-    .bad{background:rgba(255,98,98,.12);color:#ffb0b0}
-    .neutral{background:rgba(119,167,255,.12);color:#cfe0ff}
-    .tabs{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0}
-    .tab{padding:10px 13px;border-radius:999px;background:rgba(255,255,255,.06);border:1px solid var(--line);cursor:pointer;font-weight:800;color:var(--muted)}
-    .tab.active{background:linear-gradient(180deg,rgba(245,200,75,.28),rgba(245,200,75,.12));color:var(--text);border-color:rgba(245,200,75,.55)}
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Raid Offer Calculator | Tyrauku</title>
+<meta name="description" content="Is that Raid: Shadow Legends pack worth it? Enter the price and what's inside to see its value.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@600;700&family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    color-scheme: dark;
+    --bg: #0b0c0e;
+    --box: #14161a;
+    --box2: #1a1d22;
+    --line: #2c3038;
+    --ink: #ecedee;
+    --soft: #c5c8ce;
+    --muted: #979ca6;
+    --accent: #2fe6ee;
+    --gold: #e9b44c;
+    --good: #58d68d;
+    --fair: #e9b44c;
+    --skip: #ff7b72;
+    --display: "Chakra Petch", "Montserrat", "Segoe UI", sans-serif;
+    --cut: 14px;
+    --shape: polygon(0 0, calc(100% - var(--cut)) 0, 100% var(--cut), 100% 100%, var(--cut) 100%, 0 calc(100% - var(--cut)));
+  }
+  * { box-sizing: border-box; }
+  [hidden] { display: none !important; }
+  body { margin: 0; background: var(--bg); color: var(--ink); font: 15px/1.5 Montserrat, "Segoe UI", sans-serif; }
+  a { color: var(--accent); }
+  .wrap { max-width: 1160px; margin: 0 auto; padding: 28px 16px 48px; }
 
-    .modeWrap{display:flex;gap:8px;align-items:end;flex-wrap:wrap}
-    .modeGroup{display:flex;gap:8px;flex-wrap:wrap}
-    .mode{padding:10px 13px;border-radius:999px;background:rgba(255,255,255,.06);border:1px solid var(--line);cursor:pointer;font-weight:800;color:var(--muted)}
-    .mode.active{background:linear-gradient(180deg,rgba(245,200,75,.28),rgba(245,200,75,.12));color:var(--text);border-color:rgba(245,200,75,.55)}
-    .currencyWrap{display:flex;gap:8px;align-items:end;flex-wrap:wrap}
-    .currencyGroup{display:flex;gap:8px;flex-wrap:wrap}
-    .currency{padding:10px 13px;border-radius:999px;background:rgba(255,255,255,.06);border:1px solid var(--line);cursor:pointer;font-weight:800;color:var(--muted)}
-    .currency.active{background:linear-gradient(180deg,rgba(119,167,255,.28),rgba(119,167,255,.12));color:var(--text);border-color:rgba(119,167,255,.55)}
-    .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:10px}
-    .item{background:linear-gradient(180deg,rgba(28,39,64,.92),rgba(18,25,40,.92));border:1px solid var(--line);border-radius:16px;padding:11px;position:relative;overflow:hidden}
-    .item::before{content:"";position:absolute;inset:0 auto 0 0;width:3px;background:linear-gradient(var(--gold),transparent);opacity:.7}
-    .item.off{opacity:.48}
-    .itemTop{display:flex;justify-content:space-between;gap:8px;align-items:flex-start}
-    .nameWrap{display:flex;align-items:center;gap:8px}
-    .icon{width:32px;height:32px;object-fit:contain;flex:0 0 auto}
-    .name{font-weight:900;line-height:1.15}
-    .pill{font-size:12px;font-weight:900;color:#ffe08a;background:rgba(245,200,75,.12);border:1px solid rgba(245,200,75,.34);padding:4px 8px;border-radius:999px;white-space:nowrap}
-    .prices{display:flex;gap:8px;flex-wrap:wrap;color:var(--muted);font-size:12px;margin:8px 0}
-    .prices b{color:var(--text)}
-    .qtyline{display:grid;grid-template-columns:1fr 92px;gap:8px;align-items:center}
-    .qtyline input{padding:9px 10px}
-    .total{text-align:right;font-weight:900;color:#dce8ff}
-    .note{font-size:11px;color:var(--muted);margin-top:7px;line-height:1.25}
-    .footer{color:var(--muted);font-size:12px;text-align:center;padding:24px 0}
-    @media(max-width:780px){.controls{grid-template-columns:1fr 1fr}.modeWrap,.currencyWrap{grid-column:1 / -1}.summary{grid-template-columns:1fr 1fr}.top{position:static}.grid{grid-template-columns:1fr 1fr}.wrap{padding:12px}}
-    @media(max-width:520px){.grid{grid-template-columns:1fr}.controls{grid-template-columns:1fr}.summary{grid-template-columns:1fr 1fr}}
-  </style>
+  header { border-bottom: 2px solid var(--accent); padding-bottom: 18px; margin-bottom: 26px; display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 12px 24px; }
+  .by { font-family: var(--display); color: var(--accent); font-size: 15px; letter-spacing: .02em; }
+  h1 { font-family: var(--display); font-weight: 700; font-size: clamp(30px, 5vw, 46px); line-height: 1.05; margin: 2px 0 6px; }
+  .lede { color: var(--soft); margin: 0; max-width: 560px; }
+  nav { display: flex; gap: 18px; flex-wrap: wrap; font-weight: 600; }
+  nav a { text-decoration: none; }
+  nav a:hover { text-decoration: underline; }
+
+  .layout { display: grid; grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr); gap: 22px; align-items: start; }
+  .card { background: var(--line); padding: 1px; clip-path: var(--shape); }
+  .card > .in { background: var(--box); clip-path: var(--shape); padding: 18px 20px 20px; }
+  h2 { font-family: var(--display); font-size: 21px; margin: 0 0 12px; }
+  h3 { font-family: var(--display); font-size: 17px; color: var(--gold); margin: 22px 0 4px; }
+  h3:first-of-type { margin-top: 8px; }
+
+  input[type=number], input[type=search], input[type=text], select { font: inherit; color: var(--ink); background: var(--bg); border: 1px solid var(--line); padding: 8px 10px; border-radius: 0; }
+  input:focus, select:focus { outline: none; border-color: var(--accent); }
+  input:disabled { opacity: .45; }
+  label.f { display: block; color: var(--soft); font-size: 14px; }
+
+  .search { width: 100%; margin-bottom: 4px; }
+  .row { display: grid; grid-template-columns: 40px minmax(0, 1fr) 84px 92px; gap: 12px; align-items: center; padding: 10px 0; border-bottom: 1px solid var(--line); }
+  .row img { width: 40px; height: 40px; object-fit: contain; }
+  .row .noicon { width: 40px; height: 40px; }
+  .row .name { font-weight: 600; line-height: 1.25; }
+  .row .each { color: var(--muted); font-size: 13px; }
+  .row .note { color: var(--muted); font-size: 12px; margin-top: 2px; }
+  .row input { width: 100%; text-align: right; }
+  .row .line { text-align: right; font-weight: 600; color: var(--muted); white-space: nowrap; }
+  .row.has .line { color: var(--ink); }
+  .row { padding-left: 8px; padding-right: 8px; }
+  .row.has { background: var(--box2); box-shadow: inset 3px 0 0 var(--accent); }
+  .empty { color: var(--muted); padding: 14px 0; }
+  .uncounted { color: var(--muted); font-size: 13px; margin: 18px 0 0; }
+
+  .pack { position: sticky; top: 16px; }
+  .pricebox { display: grid; grid-template-columns: 1fr 110px; gap: 10px; margin-bottom: 14px; }
+  .pricebox input, .pricebox select { width: 100%; margin-top: 4px; font-size: 17px; }
+  .choice { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 4px; }
+  .choice label { position: relative; display: block; cursor: pointer; }
+  .choice input { position: absolute; opacity: 0; }
+  .choice span { display: block; text-align: center; padding: 8px 6px; border: 1px solid var(--line); background: var(--box2); color: var(--soft); font-weight: 600; clip-path: polygon(0 0, calc(100% - 9px) 0, 100% 9px, 100% 100%, 0 100%); }
+  .choice input:checked + span { border-color: var(--accent); color: var(--ink); background: #0f2a2c; }
+  .choice input:focus-visible + span { outline: 2px solid var(--accent); outline-offset: 2px; }
+  .hint { color: var(--muted); font-size: 13px; margin: 8px 0 0; }
+
+  .verdict { margin: 18px 0 14px; padding: 12px 14px; background: var(--box2); border-left: 4px solid var(--line); }
+  .verdict .ratio { font-family: var(--display); font-size: 40px; line-height: 1; }
+  .verdict .title { font-family: var(--display); font-size: 20px; margin-left: 10px; }
+  .verdict p { margin: 6px 0 0; color: var(--soft); }
+  .verdict.good { border-left-color: var(--good); } .verdict.good .ratio, .verdict.good .title { color: var(--good); }
+  .verdict.fair { border-left-color: var(--fair); } .verdict.fair .ratio, .verdict.fair .title { color: var(--fair); }
+  .verdict.skip { border-left-color: var(--skip); } .verdict.skip .ratio, .verdict.skip .title { color: var(--skip); }
+  .stats { display: grid; grid-template-columns: 1fr 1fr; gap: 1px; background: var(--line); border: 1px solid var(--line); }
+  .stats div { background: var(--box2); padding: 10px 12px; }
+  .stats span { display: block; color: var(--muted); font-size: 13px; }
+  .stats b { font-family: var(--display); font-size: 24px; }
+  .inpack { margin: 14px 0 0; padding: 0; list-style: none; font-size: 14px; }
+  .inpack li { display: flex; justify-content: space-between; gap: 10px; padding: 5px 0; border-bottom: 1px dashed var(--line); }
+  .inpack li span:last-child { color: var(--soft); white-space: nowrap; }
+  .actions { display: flex; gap: 18px; margin-top: 14px; }
+  .actions button { background: none; border: 0; padding: 0; color: var(--accent); font: inherit; font-size: 14px; text-decoration: underline; cursor: pointer; }
+  .rates { color: var(--muted); font-size: 12px; margin: 12px 0 0; }
+
+  .bar { display: none; }
+  footer { color: var(--muted); font-size: 13px; margin-top: 28px; }
+
+  @media (max-width: 860px) {
+    .layout { grid-template-columns: 1fr; }
+    .pack { position: static; order: -1; }
+    body { padding-bottom: 64px; }
+    .bar { display: flex; position: fixed; left: 0; right: 0; bottom: 0; z-index: 5; align-items: center; justify-content: space-between; gap: 12px; padding: 10px 16px; background: var(--box); border-top: 2px solid var(--line); }
+    .bar b { font-family: var(--display); font-size: 22px; }
+    .bar.good { border-top-color: var(--good); } .bar.good b { color: var(--good); }
+    .bar.fair { border-top-color: var(--fair); } .bar.fair b { color: var(--fair); }
+    .bar.skip { border-top-color: var(--skip); } .bar.skip b { color: var(--skip); }
+    .bar span { color: var(--soft); font-size: 14px; text-align: right; }
+  }
+  @media (max-width: 480px) {
+    .row { grid-template-columns: 34px minmax(0, 1fr) 72px; }
+    .row img, .row .noicon { width: 34px; height: 34px; }
+    .row .line { grid-column: 2 / 4; text-align: left; font-size: 13px; margin-top: -6px; }
+    .row:not(.has) .line { display: none; }
+  }
+</style>
 </head>
 <body>
-  <div class="wrap">
-    <header>
-      <h1>Tyrauku's <span class="gold">Raid Offer Calculator</span></h1>
-      <div class="subtitle">Enter quantities, compare the pack price, and instantly see if it beats your target values.</div>
-      <div class="links">
-        <a href="https://www.youtube.com/@TyRaids" target="_blank" class="link youtube">YouTube</a>
-        <a href="https://discord.gg/tgmgTc7YpP" target="_blank" class="link discord">Discord</a>
-        <a href="https://form.jotform.com/220255898373061" target="_blank" class="link takeover">Takeovers</a>
-        <a href="./training/" class="link youtube">Champion Training Calculator</a>
-      </div>
-    </header>
-
-    <div class="top">
-      <div class="panel">
-        <div class="controls">
-          <div><label>Pack Price</label><input id="price" type="number" min="0" step="0.01" placeholder="9.99"></div>
-          <div><label>Search Items</label><input id="search" type="text" placeholder="Ancient, energy, chickens..."></div>
-          <div class="modeWrap">
-            <div>
-              <label>Value Mode</label>
-              <div class="modeGroup">
-                <button type="button" class="mode" data-mode="strict">Strict</button>
-                <button type="button" class="mode active" data-mode="mid">Mid</button>
-                <button type="button" class="mode" data-mode="ok">OK</button>
-              </div>
-            </div>
-          </div>
-          <div class="currencyWrap">
-            <div>
-              <label>Currency</label>
-              <div class="currencyGroup">
-                <button type="button" class="currency active" data-currency="usd">USD</button>
-                <button type="button" class="currency" data-currency="eur">EUR</button>
-                <button type="button" class="currency" data-currency="gbp">GBP</button>
-                <button type="button" class="currency" data-currency="cad">CAD</button>
-                <button type="button" class="currency" data-currency="aud">AUD</button>
-              </div>
-            </div>
-          </div>
-          <button id="clearQty" type="button">Clear Qty</button>
-          <button id="clearAll" type="button">Reset All</button>
-        </div>
-        <div class="summary">
-          <div class="metric"><span>Pack Price</span><b id="mPrice">$0.00</b></div>
-          <div class="metric"><span>Added Value</span><b id="mValue">$0.00</b></div>
-          <div class="metric"><span>Difference</span><b id="mDiff">$0.00</b></div>
-          <div class="metric"><span>Value Ratio</span><b id="mRatio">0.00x</b></div>
-        </div>
-        <div id="status" class="status neutral">Add quantities to evaluate a pack.</div>
-      </div>
+<div class="wrap">
+  <header>
+    <div>
+      <div class="by">Tyrauku</div>
+      <h1>Raid Offer Calculator</h1>
+      <p class="lede">Put in the pack price and what's inside. It adds up what the items are worth and tells you if the pack is worth buying.</p>
     </div>
+    <nav>
+      <a href="./training/">Champion Training calculator</a>
+      <a href="https://www.youtube.com/@TyRaids" target="_blank" rel="noopener">YouTube</a>
+      <a href="https://discord.gg/bfXwxhRD4A" target="_blank" rel="noopener">Discord</a>
+      <a href="https://form.jotform.com/220255898373061" target="_blank" rel="noopener">Account takeovers</a>
+    </nav>
+  </header>
 
-    <div id="tabs" class="tabs"></div>
-    <main id="items" class="grid"></main>
-    <div class="footer">Strict = 80% Ideal / 20% OK  Mid = 50% Ideal / 50% OK  OK = 100% OK value</div>
+  <div class="layout">
+    <section class="card"><div class="in">
+      <h2>What's in the pack</h2>
+      <input type="search" class="search" id="search" placeholder="Search items: ancient, energy, chickens..." aria-label="Search items">
+      <div id="items"></div>
+      <p class="uncounted" id="uncounted"></p>
+    </div></section>
+
+    <section class="card pack" aria-live="polite"><div class="in">
+      <h2>Your pack</h2>
+      <div class="pricebox">
+        <label class="f">Pack price<input type="number" id="price" min="0" step="0.01" placeholder="9.99" inputmode="decimal"></label>
+        <label class="f">Currency<select id="currency"></select></label>
+      </div>
+      <div class="f">How strict to be</div>
+      <div class="choice" role="radiogroup" aria-label="Value mode" id="modes"></div>
+      <p class="hint" id="modeHint"></p>
+
+      <div class="verdict" id="verdict"></div>
+      <div class="stats">
+        <div><span>Pack value</span><b id="value">–</b></div>
+        <div><span>Difference</span><b id="diff">–</b></div>
+      </div>
+      <ul class="inpack" id="inpack"></ul>
+      <div class="actions">
+        <button type="button" id="clearQty">Clear items</button>
+        <button type="button" id="clearAll">Start over</button>
+      </div>
+      <p class="rates" id="rates"></p>
+    </div></section>
   </div>
 
+  <footer>Made by Tyrauku. Item values are my own and reflect what I'd pay. Nothing you enter leaves your browser.</footer>
+</div>
+<div class="bar" id="bar"><b id="barRatio">–</b><span id="barText">Enter a price and items</span></div>
+
+<script src="data.js"></script>
 <script>
-const ICONS={
-  'Ancient Shard':'./ancient.png',
-  'Void Shard':'./void.png',
-  'Sacred Shard':'./sacred.png',
-  'Primal Shard':'./primal.png',
-  'Energy':'./energy.png',
-  'Energy Refills':'./energyrefill.png',
-  'Gems':'./gem.png',
-  'Legendary Books':'./legendary.png',
-  'Mythical Books':'./mythical.png',
-  'Mortal Soulstone':'./mortal.png',
-  'Immortal Soulstone':'./immortal.png',
-  'Eternal Soulstone':'./eternal.png',
-  '2* Basalt':'./basalt.png',
-  '3* Basalt':'./basalt.png',
-  '4* Basalt':'./basalt.png',
-  'Starstone':'./starstone.png',
-  'Epic Books':'./epic.png',
-  'Brews':'./brew.png',
-  'Barrel':'./barrel.png',
-  '4* Chickens':'./chicken.png',
-  '5* Chickens':'./chicken.png',
-  'Feast':'./feast.png',
-  'Silver':'./silver.png',
-  'Arena Refills':'./arenarefill.jpg',
-  'Tag Arena Refills':'./tagrefill.jpg'
-};
+(function () {
+  const D = window.OFFER_DATA;
+  const $ = (id) => document.getElementById(id);
+  const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+  const idOf = (x) => x.section + "|" + x.item;
+  const CURRENCIES = ["USD", "EUR", "GBP", "CAD", "AUD", "NZD", "CHF", "SEK", "NOK", "DKK", "PLN", "CZK", "HUF", "RON",
+    "BRL", "MXN", "ARS", "CLP", "COP", "ZAR", "TRY", "INR", "JPY", "KRW", "SGD", "HKD", "PHP", "MYR", "THB", "IDR", "ILS", "AED", "SAR"];
+  const STATE_KEY = "raidPackValueState";   // same key as the old page, so saved packs carry over
+  const RATES_KEY = "raidOfferRates";
 
-const CURRENCIES={
-  usd:{label:'USD',symbol:'$',rate:1},
-  eur:{label:'EUR',symbol:'€',rate:.92},
-  gbp:{label:'GBP',symbol:'£',rate:.79},
-  cad:{label:'CAD',symbol:'CA$',rate:1.36},
-  aud:{label:'AUD',symbol:'A$',rate:1.52}
-};
+  const store = {
+    get(k) { try { return JSON.parse(localStorage.getItem(k) || "null"); } catch (e) { return null; } },
+    set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} },
+  };
 
-const DATA=[
-{section:'Regular Purchases',item:'Ancient Shard',ideal:.90,realistic:1.15},{section:'Regular Purchases',item:'Void Shard',ideal:2,realistic:2.5},{section:'Regular Purchases',item:'Sacred Shard',ideal:7,realistic:15},{section:'Regular Purchases',item:'Primal Shard',ideal:4,realistic:5},{section:'Regular Purchases',item:'Energy',ideal:.00333,realistic:.005},{section:'Regular Purchases',item:'Energy Refills',ideal:.43,realistic:.65},{section:'Regular Purchases',item:'Gems',ideal:.01075,realistic:.016},{section:'Regular Purchases',item:'Legendary Books',ideal:3.5,realistic:5},{section:'Regular Purchases',item:'Mythical Books',ideal:5,realistic:8},{section:'Regular Purchases',item:'Mortal Soulstone',ideal:.5,realistic:.8},{section:'Regular Purchases',item:'Immortal Soulstone',ideal:4,realistic:5},{section:'Regular Purchases',item:'Eternal Soulstone',ideal:20,realistic:25},{section:'Regular Purchases',item:'2* Basalt',ideal:.41,realistic:.41},{section:'Regular Purchases',item:'3* Basalt',ideal:1.25,realistic:1.25},{section:'Regular Purchases',item:'4* Basalt',ideal:5,realistic:5},{section:'Regular Purchases',item:'Starstone',ideal:.0055,realistic:.0066},
-{section:'As Needed',item:'Epic Books',ideal:2,realistic:3},{section:'Included in Packs',item:'Silver',ideal:.000001,realistic:.000001},{section:'As Needed',item:'Brews',ideal:.0093,realistic:.0093,note:'Based on pricing of barrels'},{section:'As Needed',item:'Barrel',ideal:1,realistic:1,note:'Higher value on rank 6 champs. About 200 energy worth of XP from 1-60.'},{section:'As Needed',item:'XP Boost',ideal:null,realistic:null,note:'Shop has them for 140 gems; usually not worth factoring.'},{section:'As Needed',item:'4* Chickens',ideal:1,realistic:1.25},{section:'As Needed',item:'5* Chickens',ideal:5,realistic:6},{section:'As Needed',item:'Feast',ideal:25,realistic:30,note:'Higher value when used on low rank champs.'},
-{section:'Included in Packs',item:'Clan Boss Key',ideal:null,realistic:null},{section:'Included in Packs',item:'Arena Refills',ideal:.43,realistic:.65},{section:'Included in Packs',item:'2* Chickens',ideal:null,realistic:null},{section:'Included in Packs',item:'3* Chickens',ideal:null,realistic:null},{section:'Included in Packs',item:'Tag Arena Refills',ideal:.43,realistic:.65},{section:'Included in Packs',item:'5* Epic Chaos Ore',ideal:null,realistic:null},{section:'Included in Packs',item:'6* Epic Chaos Ore',ideal:null,realistic:null},{section:'Included in Packs',item:'5* Leg Chaos Ore',ideal:null,realistic:null},{section:'Included in Packs',item:'6* Leg Chaos Ore',ideal:null,realistic:null},{section:'Included in Packs',item:'Multi-battles',ideal:null,realistic:null},{section:'Included in Packs',item:'Plarium Play Points',ideal:null,realistic:null},{section:'As Needed',item:'Rare Books',ideal:null,realistic:null},
-{section:'Never Purchased',item:'Lesser Artifact Oil',ideal:null,realistic:null},{section:'Never Purchased',item:'Greater Artifact Oil',ideal:null,realistic:null},{section:'Never Purchased',item:'Superior Artifact Oil',ideal:null,realistic:null},{section:'Never Purchased',item:'Lesser Potions',ideal:null,realistic:null},{section:'Never Purchased',item:'Greater Potions',ideal:null,realistic:null},{section:'Never Purchased',item:'Superior Potions',ideal:null,realistic:null}
-];
+  const state = Object.assign({ qty: {}, price: "", mode: "mid", currency: "USD" }, store.get(STATE_KEY) || {});
+  state.currency = String(state.currency || "USD").toUpperCase();
+  if (!D.modes[state.mode]) state.mode = "mid";
+  const save = () => store.set(STATE_KEY, state);
 
-const $=id=>document.getElementById(id);
-const saved=JSON.parse(localStorage.getItem('raidPackValueState')||'{}');
-const state={qty:{},price:'',section:'All',mode:'mid',currency:'usd',...saved};
-let currentSection=state.section||'All';
-let currentMode=state.mode||'mid';
-let currentCurrency=state.currency||'usd';
+  let rates = Object.assign({}, D.fallbackRates);
+  let ratesNote = "Using built-in exchange rates.";
+  const cached = store.get(RATES_KEY);
+  if (cached && cached.rates) { rates = cached.rates; ratesNote = rateText(cached.date); }
 
-function easyValue(x){
-  if(x.ideal==null || x.realistic==null)return null;
+  function rateText(date) {
+    return date ? "Exchange rates from " + new Date(date).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" }) + "." : "";
+  }
+  const rate = () => rates[state.currency] || 1;
 
-  const ideal=Number(x.ideal);
-  const realistic=Number(x.realistic);
+  function money(n, opts) {
+    if (n == null || isNaN(n)) return "–";
+    const abs = Math.abs(n);
+    const f = abs > 0 && abs < 0.1
+      ? { minimumSignificantDigits: 2, maximumSignificantDigits: 3 }
+      : { minimumFractionDigits: 2, maximumFractionDigits: 2 };
+    try {
+      return new Intl.NumberFormat("en-US", Object.assign({ style: "currency", currency: state.currency }, f, opts || {})).format(n);
+    } catch (e) { return state.currency + " " + n.toFixed(2); }
+  }
 
-  if(currentMode==='strict') return (ideal * 0.8) + (realistic * 0.2);
-  if(currentMode==='mid')    return (ideal * 0.5) + (realistic * 0.5);
-  if(currentMode==='ok')     return realistic;
+  // Value of one item in USD for the chosen mode, or null when it isn't counted.
+  function unitUsd(x) {
+    if (x.ideal == null || x.ok == null) return null;
+    const m = D.modes[state.mode];
+    return x.ideal * m.ideal + x.ok * m.ok;
+  }
 
-  return (ideal * 0.5) + (realistic * 0.5);
-}
-function formatMoney(n,convertFromUsd){
-  if(n==null||Number.isNaN(Number(n)))return'Not Factoring';
-  const currency=CURRENCIES[currentCurrency]||CURRENCIES.usd;
-  const raw=Number(n);
-  const num=convertFromUsd ? raw*currency.rate : raw;
-  const abs=Math.abs(num);
-  const decimals=abs<.01&&num!==0?5:2;
-  return currency.symbol+num.toLocaleString(undefined,{minimumFractionDigits:abs<.01&&num!==0?4:2,maximumFractionDigits:decimals});
-}
-function money(n){return formatMoney(n,true);}
-function localMoney(n){return formatMoney(n,false);}
-function safe(s){return String(s).replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;');}
-function idOf(x){return x.section+'|'+x.item}
-function save(){state.price=$('price').value;state.section=currentSection;state.mode=currentMode;state.currency=currentCurrency;localStorage.setItem('raidPackValueState',JSON.stringify(state));}
+  const counted = D.items.filter((x) => x.ideal != null && x.ok != null);
+  const notCounted = D.items.filter((x) => !(x.ideal != null && x.ok != null));
 
-function renderTabs(){
-  const sections=['All',...new Set(DATA.map(x=>x.section))];
-  $('tabs').innerHTML=sections.map(s=>`<button type="button" class="tab ${s===currentSection?'active':''}" data-section="${safe(s)}">${safe(s)}</button>`).join('');
-  document.querySelectorAll('.tab').forEach(btn=>btn.addEventListener('click',()=>{currentSection=btn.dataset.section;save();renderTabs();renderItems();}));
-}
+  function drawCurrencies() {
+    const sel = $("currency");
+    sel.innerHTML = "";
+    CURRENCIES.filter((c) => rates[c]).forEach((c) => sel.add(new Option(c, c, false, c === state.currency)));
+    if (!rates[state.currency]) { state.currency = "USD"; sel.value = "USD"; }
+  }
 
-function renderModes(){
-  document.querySelectorAll('.mode').forEach(btn=>{
-    btn.classList.toggle('active',btn.dataset.mode===currentMode);
-    btn.onclick=()=>{
-      currentMode=btn.dataset.mode;
-      save();
-      renderModes();
-      renderItems();
-    };
-  });
-}
+  function drawModes() {
+    $("modes").innerHTML = Object.entries(D.modes).map(([k, m]) =>
+      `<label><input type="radio" name="mode" value="${k}" ${k === state.mode ? "checked" : ""}><span>${esc(m.label)}</span></label>`).join("");
+    $("modes").querySelectorAll("input").forEach((r) => r.addEventListener("change", () => { state.mode = r.value; save(); drawItems(); update(); }));
+  }
 
-function renderCurrencies(){
-  document.querySelectorAll('.currency').forEach(btn=>{
-    btn.classList.toggle('active',btn.dataset.currency===currentCurrency);
-    btn.onclick=()=>{
-      currentCurrency=btn.dataset.currency;
-      save();
-      renderCurrencies();
-      renderItems();
-    };
-  });
-}
+  function modeHint() {
+    const m = D.modes[state.mode];
+    if (m.ideal === 0) return "Counts every item at its OK price, the most forgiving.";
+    return `Counts each item ${Math.round(m.ideal * 100)}% at its ideal price and ${Math.round(m.ok * 100)}% at its OK price.`;
+  }
 
-function renderItems(){
-  const q=$('search').value.toLowerCase().trim();
-  const rows=DATA.filter(x=>(currentSection==='All'||x.section===currentSection)&&(!q||x.item.toLowerCase().includes(q)));
-  $('items').innerHTML=rows.map(x=>{
-    const id=idOf(x);
-    const qty=state.qty[id]??'';
-    const easy=easyValue(x);
-    const total=easy!=null&&qty!==''?easy*Number(qty):0;
-    const icon=ICONS[x.item]||'';
-    return `<article class="item ${easy==null?'off':''}">
-      <div class="itemTop">
-        <div class="nameWrap">
-          ${icon?`<img src="${safe(icon)}" class="icon" loading="lazy" alt="">`:''}
-          <div class="name">${safe(x.item)}</div>
-        </div>
-        <div class="pill">${easy==null?'Skip':money(easy)}</div>
-      </div>
-      <div class="prices"><span>Ideal <b>${money(x.ideal)}</b></span><span>OK <b>${money(x.realistic)}</b></span></div>
-      <div class="qtyline"><input type="text" inputmode="numeric" pattern="[0-9]*" autocomplete="off" placeholder="Qty" value="${safe(qty)}" data-id="${safe(id)}" data-easy="${easy??''}" ${easy==null?'disabled':''}><div class="total" data-total-for="${safe(id)}">${total?money(total):localMoney(0)}</div></div>
-      ${x.note?`<div class="note">${safe(x.note)}</div>`:''}
-    </article>`
-  }).join('');
-  document.querySelectorAll('input[data-id]').forEach(input=>input.addEventListener('input',onQtyInput));
-  updateSummary();
-}
+  function drawItems() {
+    const q = $("search").value.toLowerCase().trim();
+    let html = "";
+    D.sections.forEach((sec) => {
+      const rows = counted.filter((x) => x.section === sec && (!q || x.item.toLowerCase().includes(q)));
+      if (!rows.length) return;
+      html += `<h3>${esc(sec.charAt(0) + sec.slice(1).toLowerCase())}</h3>`;
+      rows.forEach((x) => {
+        const id = idOf(x);
+        const each = unitUsd(x) * rate();
+        html += `<div class="row" data-id="${esc(id)}">
+          ${x.icon ? `<img src="icons/${esc(x.icon)}.png" alt="" loading="lazy">` : `<span class="noicon"></span>`}
+          <div><div class="name">${esc(x.item)}</div><div class="each">${money(each)} each</div>${x.note ? `<div class="note">${esc(x.note)}</div>` : ""}</div>
+          <input type="text" inputmode="numeric" autocomplete="off" placeholder="0" aria-label="${esc(x.item)} quantity" value="${esc(state.qty[id] || "")}">
+          <div class="line"></div>
+        </div>`;
+      });
+    });
+    $("items").innerHTML = html || `<div class="empty">No items match "${esc(q)}".</div>`;
+    $("items").querySelectorAll(".row input").forEach((inp) => inp.addEventListener("input", () => {
+      const clean = inp.value.replace(/\D/g, "");
+      if (clean !== inp.value) inp.value = clean;
+      const id = inp.closest(".row").dataset.id;
+      if (clean === "" || Number(clean) === 0) delete state.qty[id]; else state.qty[id] = clean;
+      save(); update();
+    }));
+    $("uncounted").textContent = notCounted.length
+      ? "Not counted (they show up in packs but don't add value here): " + notCounted.map((x) => x.item).join(", ") + "."
+      : "";
+  }
 
-function onQtyInput(e){
-  const input=e.target;
-  const id=input.dataset.id;
-  const easy=Number(input.dataset.easy||0);
-  const cleaned=input.value.replace(/\D/g,'');
-  if(input.value!==cleaned)input.value=cleaned;
-  if(cleaned==='')delete state.qty[id];else state.qty[id]=cleaned;
-  const lineTotal=cleaned===''?0:Number(cleaned)*easy;
-  const totalEl=document.querySelector(`[data-total-for="${CSS.escape(id)}"]`);
-  if(totalEl)totalEl.textContent=lineTotal?money(lineTotal):localMoney(0);
-  updateSummary();
-  save();
-}
+  function update() {
+    let valueUsd = 0;
+    const lines = [];
+    counted.forEach((x) => {
+      const n = Number(state.qty[idOf(x)] || 0);
+      if (n > 0) { const v = n * unitUsd(x); valueUsd += v; lines.push({ x, n, v }); }
+    });
+    const value = valueUsd * rate();
+    const price = Number(state.price) || 0;
 
-function updateSummary(){
-  const price=Number($('price').value||0);
-  const currency=CURRENCIES[currentCurrency]||CURRENCIES.usd;
-  let valueUsd=0,used=0;
-  DATA.forEach(x=>{
-    const easy=easyValue(x);
-    const qty=Number(state.qty[idOf(x)]||0);
-    if(easy!=null&&qty>0){valueUsd+=qty*easy;used++;}
-  });
-  const value=valueUsd*currency.rate;
-  const diff=value-price,ratio=price?value/price:0;
-  $('mPrice').textContent=localMoney(price);
-  $('mValue').textContent=localMoney(value);
-  $('mDiff').textContent=localMoney(diff);
-  $('mRatio').textContent=price?ratio.toFixed(2)+'x':'0.00x';
-  const st=$('status');
-  st.className='status neutral';
-  if(ratio>=1){
-  st.className='status good';
-  st.textContent='GOOD DEAL — meets or exceeds your value target.'
-}
-else if(ratio>=0.8){
-  st.className='status fair';
-  st.textContent='FAIR — slightly below your target value.'
-}
-else{
-  st.className='status bad';
-  st.textContent='SKIP — well below your target value.'
-}
-}
+    document.querySelectorAll("#items .row").forEach((row) => {
+      const x = counted.find((i) => idOf(i) === row.dataset.id);
+      const n = Number(state.qty[row.dataset.id] || 0);
+      row.classList.toggle("has", n > 0);
+      row.querySelector(".line").textContent = n > 0 ? money(n * unitUsd(x) * rate()) : money(0);
+    });
 
-$('price').value=state.price||'';
-$('price').addEventListener('input',()=>{updateSummary();save();});
-$('search').addEventListener('input',renderItems);
-$('clearQty').addEventListener('click',()=>{state.qty={};save();renderItems();});
-$('clearAll').addEventListener('click',()=>{state.qty={};state.price='';$('price').value='';save();renderItems();});
-renderModes();
-renderCurrencies();
-renderTabs();
-renderItems();
+    $("value").textContent = lines.length ? money(value) : "–";
+    $("diff").textContent = lines.length && price ? (value - price >= 0 ? "+" : "") + money(value - price) : "–";
+    $("inpack").innerHTML = lines.map((l) => `<li><span>${l.n.toLocaleString("en-US")} ${esc(l.x.item)}</span><span>${money(l.v * rate())}</span></li>`).join("");
+
+    const verdict = $("verdict"), bar = $("bar");
+    verdict.className = "verdict"; bar.className = "bar";
+    if (!price || !lines.length) {
+      const need = !price && !lines.length ? "Enter the pack price and what's in it." : !price ? "Now enter the pack price." : "Now enter what's in the pack.";
+      verdict.innerHTML = `<p style="margin:0">${need}</p>`;
+      $("barRatio").textContent = "–"; $("barText").textContent = need;
+      return;
+    }
+    const ratio = value / price;
+    const v = D.verdicts.find((x) => ratio >= x.min) || D.verdicts[D.verdicts.length - 1];
+    verdict.classList.add(v.key); bar.classList.add(v.key);
+    verdict.innerHTML = `<span class="ratio">${ratio.toFixed(2)}x</span><span class="title">${esc(v.title)}</span><p>${esc(v.text)} You get ${money(value)} of value for ${money(price)}.</p>`;
+    $("barRatio").textContent = ratio.toFixed(2) + "x";
+    $("barText").textContent = v.title + " · " + money(value) + " value";
+  }
+
+  async function loadRates() {
+    if (cached && cached.time && Date.now() - cached.time < 12 * 3600 * 1000) return;
+    try {
+      const r = await fetch("https://open.er-api.com/v6/latest/USD");
+      const j = await r.json();
+      if (j && j.result === "success" && j.rates) {
+        rates = j.rates;
+        const date = (j.time_last_update_unix || Date.now() / 1000) * 1000;
+        store.set(RATES_KEY, { rates, time: Date.now(), date });
+        ratesNote = rateText(date);
+        drawCurrencies(); drawItems(); update(); $("rates").textContent = ratesNote;
+      }
+    } catch (e) { /* keep built-in or saved rates */ }
+  }
+
+  $("price").value = state.price || "";
+  $("price").addEventListener("input", () => { state.price = $("price").value; save(); update(); });
+  $("currency").addEventListener("change", () => { state.currency = $("currency").value; save(); drawItems(); update(); });
+  $("search").addEventListener("input", () => { drawItems(); update(); });
+  $("clearQty").addEventListener("click", () => { state.qty = {}; save(); drawItems(); update(); });
+  $("clearAll").addEventListener("click", () => { state.qty = {}; state.price = ""; $("price").value = ""; $("search").value = ""; save(); drawItems(); update(); });
+
+  drawCurrencies(); drawModes();
+  $("modeHint").textContent = modeHint();
+  $("modes").addEventListener("change", () => { $("modeHint").textContent = modeHint(); });
+  drawItems(); update();
+  $("rates").textContent = ratesNote;
+  loadRates();
+})();
 </script>
 </body>
 </html>
